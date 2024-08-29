@@ -1,6 +1,6 @@
 ﻿using Kingdoms.Server.Domain.Entities.Items;
 
-namespace Kingdoms.Server.Domain.Entities.Player;
+namespace Kingdoms.Server.Domain.Entities.Players;
 
 public class PlayerInventory : List<Item>
 {

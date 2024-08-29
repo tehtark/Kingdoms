@@ -1,4 +1,4 @@
-﻿namespace Kingdoms.Server.Domain.Entities.Player;
+﻿namespace Kingdoms.Server.Domain.Entities.Players;
 
 public class Player
 {
