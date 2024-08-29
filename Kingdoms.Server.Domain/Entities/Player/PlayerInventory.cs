@@ -2,12 +2,12 @@
 
 namespace Kingdoms.Server.Domain.Entities.Player;
 
-public class Inventory : List<Item>
+public class PlayerInventory : List<Item>
 {
     public int Id { get; set; }
     public int Gold { get; private set; }
 
-    public Inventory(int id, int gold)
+    public PlayerInventory(int id, int gold)
     {
         Id = id;
         Gold = gold;
