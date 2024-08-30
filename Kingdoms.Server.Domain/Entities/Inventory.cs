@@ -1,13 +1,13 @@
 ﻿using Kingdoms.Server.Domain.Entities.Items;
 
-namespace Kingdoms.Server.Domain.Entities.Players;
+namespace Kingdoms.Server.Domain.Entities;
 
-public class PlayerInventory : List<Item>
+public class Inventory : List<Item>
 {
     public int Id { get; set; }
     public int Gold { get; private set; }
 
-    public PlayerInventory(int id, int gold)
+    public Inventory(int id, int gold)
     {
         Id = id;
         Gold = gold;

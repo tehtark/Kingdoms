@@ -1,4 +1,4 @@
-﻿namespace Kingdoms.Server.Domain.Entities.Players;
+﻿namespace Kingdoms.Server.Domain.Entities;
 
 public class Player
 {
@@ -12,9 +12,9 @@ public class Player
     private int _maxStamina = 100;
     public int Magicka { get; set; }
     private int _maxMagicka = 100;
-    public PlayerInventory PlayerInventory { get; set; }
+    public Inventory PlayerInventory { get; set; }
 
-    public Player(int id, string username, PlayerInventory inventory)
+    public Player(int id, string username, Inventory inventory)
     {
         Id = id;
         Username = username;
