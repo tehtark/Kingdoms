@@ -13,4 +13,8 @@
     <PackageReference Include="MudBlazor" Version="7.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Kingdoms.Client.Application\Kingdoms.Client.Application.csproj" />
+  </ItemGroup>
+
 </Project>

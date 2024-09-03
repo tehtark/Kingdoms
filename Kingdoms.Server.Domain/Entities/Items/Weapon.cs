@@ -1,10 +1,12 @@
-﻿using Kingdoms.Server.Domain.Entities.Player;
-
-namespace Kingdoms.Server.Domain.Entities.Items;
+﻿namespace Kingdoms.Server.Domain.Entities.Items;
 
 public class Weapon : Item
 {
-    public void Attack(Player.Player player)
+    public Weapon(int id) : base(id)
+    {
+    }
+
+    public void Attack(Player player)
     {
         Console.WriteLine("Attacking with weapon");
     }

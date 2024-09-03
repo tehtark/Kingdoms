@@ -6,7 +6,7 @@ namespace Kingdoms.Client.Application.Services;
 internal class GameHubService
 {
     private NavigationManager _navigationManager;
-    private HubConnection _hubConnection;
+    private HubConnection? _hubConnection;
 
     public GameHubService(NavigationManager navigationManager)
     {
