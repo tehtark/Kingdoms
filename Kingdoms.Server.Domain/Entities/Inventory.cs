@@ -1,25 +1,16 @@
-﻿using Kingdoms.Server.Domain.Entities.Items;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Kingdoms.Server.Domain.Entities;
 
-public class Inventory : List<Item>
+public class Inventory
 {
-    public int Id { get; set; }
-    public int Gold { get; private set; }
+    [Key]
+    public Guid InventoryId { get; set; }
 
-    public Inventory(int id, int gold)
-    {
-        Id = id;
-        Gold = gold;
-    }
+    [Required]
+    public Guid PlayerId { get; set; }
 
-    public void AddGold(int amount)
-    {
-        Gold += amount;
-    }
+    public Player Player { get; set; }
 
-    public void RemoveGold(int amount)
-    {
-        Gold -= amount;
-    }
+    public List<InventoryItem> Items { get; set; } = [];
 }
