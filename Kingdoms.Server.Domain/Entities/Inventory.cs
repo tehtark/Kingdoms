@@ -1,16 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kingdoms.Server.Domain.Entities;
 
-public class Inventory
+[NotMapped]
+public class Inventory : List<Item>
 {
-    [Key]
-    public Guid InventoryId { get; set; }
-
-    [Required]
-    public Guid PlayerId { get; set; }
-
-    public Player Player { get; set; }
-
-    public List<InventoryItem> Items { get; set; } = [];
+    public int InventoryId { get; set; }
+    public int PlayerId { get; set; }
 }

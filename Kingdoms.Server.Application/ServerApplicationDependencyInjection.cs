@@ -7,7 +7,14 @@ namespace Kingdoms.Server.Application
     {
         public static IServiceCollection AddServerApplication(this IServiceCollection services)
         {
+            services.AddMediatR(config => {
+                config.RegisterServicesFromAssembly(typeof(ServerApplicationDependencyInjection).Assembly);
+            });
+
+            services.AddHostedService<TestService>();
+
             services.AddServerInfrastructure();
+
             return services;
         }
     }

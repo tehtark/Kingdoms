@@ -7,7 +7,7 @@ public static class ServerInfrastructureDependencyInjection
 {
     public static IServiceCollection AddServerInfrastructure(this IServiceCollection services)
     {
-        services.AddDbContext<DatabaseContext>();
+        services.AddTransient<DatabaseContext>();
 
         return services;
     }
