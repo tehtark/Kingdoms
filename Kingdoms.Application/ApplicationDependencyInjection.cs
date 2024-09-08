@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Kingdoms.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Kingdoms.Application;
 
@@ -9,5 +10,7 @@ public static class ApplicationDependencyInjection
         services.AddMediatR(config => {
             config.RegisterServicesFromAssembly(typeof(ApplicationDependencyInjection).Assembly);
         });
+
+        services.AddInfrastructure();
     }
 }
