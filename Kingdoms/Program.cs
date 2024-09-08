@@ -1,8 +1,9 @@
+using Kingdoms.Application;
+
 using Kingdoms.Components;
 using MudBlazor.Services;
 using Serilog;
 using Serilog.Events;
-using Kingdoms.Application;
 
 internal class Program
 {
