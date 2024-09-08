@@ -2,6 +2,7 @@ using Kingdoms.Components;
 using MudBlazor.Services;
 using Serilog;
 using Serilog.Events;
+using Kingdoms.Application;
 
 internal class Program
 {
@@ -17,6 +18,8 @@ internal class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+
+        builder.Services.AddApplication();
 
         var app = builder.Build();
 
