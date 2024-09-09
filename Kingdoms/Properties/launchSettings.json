@@ -9,6 +9,18 @@
         }
     },
     "profiles": {
+        "start": {
+            "commandName": "Project",
+            "dotnetRunMessages": true,
+            "launchBrowser": true,
+            "applicationUrl": "https://localhost:7256;http://localhost:5140",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "SQL_CONNTECTION_STRING": "",
+                "AUTH_DOMAIN": "",
+                "AUTH_CLIENT_ID": ""
+            }
+        },
         "http": {
             "commandName": "Project",
             "dotnetRunMessages": true,
