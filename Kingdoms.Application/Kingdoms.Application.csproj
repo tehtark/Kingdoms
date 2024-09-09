@@ -12,7 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Kingdoms.Domain\Kingdoms.Domain.csproj" />
     <ProjectReference Include="..\Kingdoms.Infrastructure\Kingdoms.Infrastructure.csproj" />
   </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 
 </Project>

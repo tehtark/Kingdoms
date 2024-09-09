@@ -1,6 +1,12 @@
-﻿
-<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+﻿<MudNavMenu>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Dashboard</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudNavMenu>
 
 

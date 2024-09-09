@@ -1,9 +1,8 @@
 using Auth0.AspNetCore.Authentication;
 using Kingdoms.Application;
-
 using Kingdoms.Components;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using MudBlazor.Services;
 using Serilog;
 using Serilog.Events;

@@ -5,7 +5,7 @@
 namespace Kingdoms.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialPlayer : Migration
+    public partial class UpdatePlayer1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,8 +14,7 @@ namespace Kingdoms.Infrastructure.Migrations
                 name: "Players",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
