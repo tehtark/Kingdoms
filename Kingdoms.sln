@@ -5,11 +5,11 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms", "Kingdoms\Kingdoms.csproj", "{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kingdoms.Domain", "Kingdoms.Domain\Kingdoms.Domain.csproj", "{4D7F708A-2610-419F-9EA2-C3B39D48A695}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Domain", "Kingdoms.Domain\Kingdoms.Domain.csproj", "{4D7F708A-2610-419F-9EA2-C3B39D48A695}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kingdoms.Application", "Kingdoms.Application\Kingdoms.Application.csproj", "{D1B1C382-F92B-4783-9F7C-D741BC217769}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Application", "Kingdoms.Application\Kingdoms.Application.csproj", "{D1B1C382-F92B-4783-9F7C-D741BC217769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kingdoms.Infrastructure", "Kingdoms.Infrastructure\Kingdoms.Infrastructure.csproj", "{3420762C-3FFA-470A-AE19-63EE8C520D1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Infrastructure", "Kingdoms.Infrastructure\Kingdoms.Infrastructure.csproj", "{3420762C-3FFA-470A-AE19-63EE8C520D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

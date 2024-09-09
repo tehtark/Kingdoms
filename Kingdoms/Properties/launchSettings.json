@@ -17,8 +17,8 @@
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "SQL_CONNTECTION_STRING": "",
-                "AUTH_DOMAIN": "",
-                "AUTH_CLIENT_ID": ""
+                "AUTH_DOMAIN": "tark.uk.auth0.com",
+                "AUTH_CLIENT_ID": "iqwofqR6w59Uta5euZxQFOdk0Ts5YRU6"
             }
         },
         "http": {
