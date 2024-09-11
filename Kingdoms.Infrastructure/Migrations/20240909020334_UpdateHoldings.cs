@@ -5,18 +5,20 @@
 namespace Kingdoms.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatePlayer1 : Migration
+    public partial class UpdateHoldings : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Players",
+                name: "Holdings",
                 columns: table => new {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlayerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table => {
-                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.PrimaryKey("PK_Holdings", x => x.Id);
                 });
         }
 
@@ -24,7 +26,7 @@ namespace Kingdoms.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Players");
+                name: "Holdings");
         }
     }
 }

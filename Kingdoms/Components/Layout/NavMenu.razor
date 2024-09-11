@@ -1,12 +1,11 @@
 ﻿<MudNavMenu>
     <AuthorizeView>
         <Authorized>
-            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Dashboard</MudNavLink>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            <MudNavLink Href="/holdings" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DensitySmall">Holdings</MudNavLink>
         </Authorized>
         <NotAuthorized>
             <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
 </MudNavMenu>
-
-

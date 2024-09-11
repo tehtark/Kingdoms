@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms", "Kingdoms\Kingdoms.csproj", "{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Domain", "Kingdoms.Domain\Kingdoms.Domain.csproj", "{4D7F708A-2610-419F-9EA2-C3B39D48A695}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Application", "Kingdoms.Application\Kingdoms.Application.csproj", "{D1B1C382-F92B-4783-9F7C-D741BC217769}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Infrastructure", "Kingdoms.Infrastructure\Kingdoms.Infrastructure.csproj", "{3420762C-3FFA-470A-AE19-63EE8C520D1C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms", "Kingdoms\Kingdoms.csproj", "{B73C52F0-1536-4D60-8EC3-26C335738738}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21EC62FA-2FA5-44AA-B73E-53A0D34611AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D7F708A-2610-419F-9EA2-C3B39D48A695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D7F708A-2610-419F-9EA2-C3B39D48A695}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D7F708A-2610-419F-9EA2-C3B39D48A695}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{3420762C-3FFA-470A-AE19-63EE8C520D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3420762C-3FFA-470A-AE19-63EE8C520D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3420762C-3FFA-470A-AE19-63EE8C520D1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B73C52F0-1536-4D60-8EC3-26C335738738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B73C52F0-1536-4D60-8EC3-26C335738738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B73C52F0-1536-4D60-8EC3-26C335738738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B73C52F0-1536-4D60-8EC3-26C335738738}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
