@@ -1,4 +1,5 @@
-﻿using Kingdoms.Infrastructure;
+﻿using Kingdoms.Application.Services;
+using Kingdoms.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kingdoms.Application;
@@ -12,5 +13,8 @@ public static class ApplicationDependencyInjection
         });
 
         services.AddInfrastructure();
+
+        services.AddSingleton<GameTickService>();
+        services.AddHostedService<GameService>();
     }
 }

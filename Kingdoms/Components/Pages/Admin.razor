@@ -1,0 +1,47 @@
+﻿@page "/admin"
+@using Kingdoms.Application.Features.Game.Queries
+@using Kingdoms.Application.Services
+
+@attribute [Authorize]
+
+@implements IAsyncDisposable
+@inject ISender _mediator
+@inject GameTickService gameTickServices
+
+@if (!_isLoaded) {
+    <Loading />
+}
+else {
+    <h3>Admin</h3>
+
+    @if (_tick is not null) {
+        <h4>@_tick</h4>
+    }
+}
+
+@code {
+    private bool _isLoaded = false;
+    private int? _tick = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(Globals.DefaultDelay);
+
+        _tick = await _mediator.Send(new GetTickQuery());
+        gameTickServices.OnTickUpdated += GameTickServices_OnTickUpdated;
+        _isLoaded = true;
+    }
+
+    ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        gameTickServices.OnTickUpdated -= GameTickServices_OnTickUpdated;
+        return ValueTask.CompletedTask;
+    }
+
+    private async Task GameTickServices_OnTickUpdated()
+    {
+        _tick = await _mediator.Send(new GetTickQuery());
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

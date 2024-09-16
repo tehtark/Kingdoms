@@ -7,6 +7,7 @@ public class DatabaseContext : DbContext
 {
     public DbSet<Player> Players { get; set; }
     public DbSet<Holding> Holdings { get; set; }
+    public DbSet<Building> Buildings { get; set; }
 
     private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=KingdomsTest;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 

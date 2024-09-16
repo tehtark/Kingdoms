@@ -3,6 +3,7 @@
 @using Kingdoms.Application.Features.Player.Commands
 @using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Domain.Enums
+
 @attribute [Authorize]
 @inject ISender _mediator
 @inject NavigationManager _nav
@@ -10,42 +11,27 @@
 @if (_player != null) {
     <MudGrid Spacing="4">
         <MudItem xs="12">
-                <MudExpansionPanels MultiExpansion="true" >
-                    <MudExpansionPanel Expanded="true" Text="Player Information">
-                        ID: @_player.Id<br />
-                        Username: @_player.Username<br />
-                        Level: @_player.Level<br />
-                        Experience: @_player.Experience<br />
-                        Gold: @_player.Gold
-                    </MudExpansionPanel>
-@*                     <MudExpansionPanel Text="Holdings">
-                        @if (_holdings != null && _holdings.Count != 0) {
-                            <h1>Total Holdings: @_holdings.Count</h1>
-                            <MudDataGrid Items="@_holdings">
-                                <Columns>
-                                    <PropertyColumn Property="x => x.Id" />
-                                    <PropertyColumn Property="x => x.PlayerId" />
-                                    <PropertyColumn Property="x => x.Type" />
-                                </Columns>
-                            </MudDataGrid>
-                        }
-                    </MudExpansionPanel> *@
-                </MudExpansionPanels>
+            <MudExpansionPanels MultiExpansion="true">
+                <MudExpansionPanel Expanded="true" Text="Player Information">
+                    ID: @_player.Id<br />
+                    Username: @_player.Username<br />
+                    Level: @_player.Level<br />
+                    Experience: @_player.Experience<br />
+                    Gold: @_player.Gold
+                </MudExpansionPanel>
+            </MudExpansionPanels>
         </MudItem>
     </MudGrid>
 
 }
 else {
-    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <MudProgressCircular Color="Color.Default" Size="Size.Large" Indeterminate="true" />
-    </div>
+    <Loading />
 }
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
     private Player? _player;
-    // private List<Holding>? _holdings;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +48,6 @@ else {
                     //if the player couldn't be found create a new one.
                     _player = await _mediator.Send(new CreatePlayerCommand(playerId, "johndoe"));
                 }
-                // _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(playerId));
 
             }
         }

@@ -1,0 +1,129 @@
+﻿@page "/holdings"
+
+@using Kingdoms.Application.Features.Holding.Commands
+@using Kingdoms.Application.Features.Holding.Queries
+@using Kingdoms.Application.Features.Player.Queries
+@using Kingdoms.Application.Features.Building.Commands
+@using Kingdoms.Application.Features.Building.Queries
+@using Kingdoms.Application.Services
+@using Kingdoms.Domain.Enums
+
+@implements IAsyncDisposable
+@attribute [Authorize]
+
+@inject NavigationManager _nav
+@inject ISender _mediator
+@inject GameTickService gameTickService
+
+@if (_holdings is null) {
+    <Loading />
+}
+else {
+    <MudGrid>
+        <MudItem xs="12">
+            <MudPaper Class="d-flex align-center pa-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateHolding">Create Holding</MudButton>
+            </MudPaper>
+        </MudItem>
+        @if (_holdings.Count > 0) {
+            <MudItem xs="12">
+                <MudCarousel SelectedIndexChanged="OnSelectedIndexChanged" ItemsSource="@_holdings" Style="height:50px;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
+                    <ItemTemplate>
+                        <MudPaper Class="d-flex justify-center align-center" Style="height:50px">
+                            <MudText>@_holdings[_selectedIndex].Id</MudText>
+                        </MudPaper>
+                    </ItemTemplate>
+                </MudCarousel>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper>
+                    <MudExpansionPanels MultiExpansion="true">
+                        <MudExpansionPanel Expanded="true" Text="Village Information">
+                            Id: @_holdings[_selectedIndex].Id<br />
+                            Owner: @_holdings[_selectedIndex].PlayerId<br />
+                            Type: @_holdings[_selectedIndex].Type<br />
+                        </MudExpansionPanel>
+                        <MudExpansionPanel Expanded="true" Text="Buildings">
+                            @if (_holdings.Count > 0) {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
+                            }
+                            @if (_holdings[_selectedIndex].Buildings.Count > 0) {
+                                <MudDataGrid  Items="_holdings[_selectedIndex].Buildings">
+                                    <Columns>
+                                        <PropertyColumn Property="x => x.Id" Title="Id" />
+                                        <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
+                                        <PropertyColumn Property="x => x.Name" />
+                                        <PropertyColumn Property="x => x.Level" />
+                                        <PropertyColumn Property="x => x.ConstructionStartTime" Title="Construction Time" />
+                                        <PropertyColumn Property="x => x.ConstructionDuration" Title="Construction Duration" />
+                                        <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
+                                    </Columns>
+                                </MudDataGrid>
+                            }
+                        </MudExpansionPanel>
+                    </MudExpansionPanels>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private List<Holding>? _holdings = null;
+    private int _selectedIndex;
+    private string? _playerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(Globals.DefaultDelay);
+
+        if (AuthenticationState is not null) {
+            var state = await AuthenticationState;
+            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+            if (_playerId is not null) {
+                _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+                if (_holdings.Count > 0) {
+                    _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+                }
+            }
+        }
+        gameTickService.OnTickUpdated += OnTickUpdated;
+        await base.OnInitializedAsync();
+    }
+
+    ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        gameTickService.OnTickUpdated -= OnTickUpdated;
+        return ValueTask.CompletedTask;
+    }
+
+    private async Task CreateHolding()
+    {
+        if (_playerId is null) return;
+        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
+        _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+        StateHasChanged();
+    }
+
+    private async Task CreateBuilding()
+    {
+        await _mediator.Send(new CreateBuildingCommand(_holdings[_selectedIndex].Id, BuildingType.Lumberyard));
+        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        StateHasChanged();
+    }
+
+    public async Task OnSelectedIndexChanged(int newIndex)
+    {
+        _selectedIndex = newIndex;
+        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        StateHasChanged();
+    }
+    public async Task OnTickUpdated()
+    {
+        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        // _nav.Refresh(true);
+        await InvokeAsync(StateHasChanged);
+    }
+}

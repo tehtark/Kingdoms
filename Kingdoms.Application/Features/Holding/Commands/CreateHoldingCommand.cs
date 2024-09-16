@@ -1,7 +1,6 @@
 ﻿using Kingdoms.Domain.Enums;
 using Kingdoms.Infrastructure.Database;
 using MediatR;
-using Serilog;
 
 namespace Kingdoms.Application.Features.Holding.Commands;
 

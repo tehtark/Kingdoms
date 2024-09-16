@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kingdoms.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240909020334_UpdateHoldings")]
-    partial class UpdateHoldings
+    [Migration("20240913005746_Update1")]
+    partial class Update1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,41 @@ namespace Kingdoms.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Kingdoms.Domain.Entities.Building", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ConstructionDuration")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ConstructionStartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HoldingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsConstructed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HoldingId");
+
+                    b.ToTable("Buildings");
+                });
 
             modelBuilder.Entity("Kingdoms.Domain.Entities.Holding", b =>
                 {
@@ -64,6 +99,20 @@ namespace Kingdoms.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Players");
+                });
+
+            modelBuilder.Entity("Kingdoms.Domain.Entities.Building", b =>
+                {
+                    b.HasOne("Kingdoms.Domain.Entities.Holding", null)
+                        .WithMany("Buildings")
+                        .HasForeignKey("HoldingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Kingdoms.Domain.Entities.Holding", b =>
+                {
+                    b.Navigation("Buildings");
                 });
 #pragma warning restore 612, 618
         }

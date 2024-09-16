@@ -14,10 +14,13 @@ public class Holding
     [Required]
     public HoldingType Type { get; set; }
 
+    public ICollection<Building> Buildings { get; set; }
+
     public Holding(Guid id, string playerId, HoldingType type)
     {
         Id = id;
         PlayerId = playerId;
         Type = type;
+        Buildings = new List<Building>();
     }
 }
