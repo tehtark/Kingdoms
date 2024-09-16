@@ -14,7 +14,9 @@ public class Holding
     [Required]
     public HoldingType Type { get; set; }
 
-    public ICollection<Building> Buildings { get; set; }
+    public ICollection<Building>? Buildings { get; set; }
+
+    public Resources? Resources { get; set; }
 
     public Holding(Guid id, string playerId, HoldingType type)
     {
@@ -22,5 +24,6 @@ public class Holding
         PlayerId = playerId;
         Type = type;
         Buildings = new List<Building>();
+        Resources = new Resources { Id = new(), HoldingId = id };
     }
 }

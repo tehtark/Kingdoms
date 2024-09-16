@@ -5,6 +5,7 @@
 @using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Application.Features.Building.Commands
 @using Kingdoms.Application.Features.Building.Queries
+@using Kingdoms.Application.Features.Resources.Queries
 @using Kingdoms.Application.Services
 @using Kingdoms.Domain.Enums
 
@@ -38,10 +39,15 @@ else {
             <MudItem xs="12">
                 <MudPaper>
                     <MudExpansionPanels MultiExpansion="true">
-                        <MudExpansionPanel Expanded="true" Text="Village Information">
+                        <MudExpansionPanel Expanded="true" Text="Information">
                             Id: @_holdings[_selectedIndex].Id<br />
                             Owner: @_holdings[_selectedIndex].PlayerId<br />
                             Type: @_holdings[_selectedIndex].Type<br />
+                        </MudExpansionPanel>
+                        <MudExpansionPanel Expanded="true" Text="Resources">
+                            Wood: @_holdings[_selectedIndex].Resources.Wood<br />
+                            Stone: @_holdings[_selectedIndex].Resources.Stone<br />
+                            Iron: @_holdings[_selectedIndex].Resources.Iron<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
@@ -82,10 +88,13 @@ else {
                 _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
                 if (_holdings.Count > 0) {
                     _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+                    _holdings[_selectedIndex].Resources = await _mediator.Send(new GetResourcesByHoldingIdQuery(_holdings[_selectedIndex].Id));
                 }
             }
         }
+
         gameTickService.OnTickUpdated += OnTickUpdated;
+        
         await base.OnInitializedAsync();
     }
 
@@ -119,7 +128,6 @@ else {
     public async Task OnTickUpdated()
     {
         _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
-        // _nav.Refresh(true);
         await InvokeAsync(StateHasChanged);
     }
 }
