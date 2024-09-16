@@ -44,18 +44,14 @@ else {
                             Type: @_holdings[_selectedIndex].Type<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
-                            @if (_holdings.Count > 0) {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
-                            }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
                             @if (_holdings[_selectedIndex].Buildings.Count > 0) {
-                                <MudDataGrid  Items="_holdings[_selectedIndex].Buildings">
+                                <MudDataGrid Items="_holdings[_selectedIndex].Buildings">
                                     <Columns>
                                         <PropertyColumn Property="x => x.Id" Title="Id" />
                                         <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
                                         <PropertyColumn Property="x => x.Name" />
                                         <PropertyColumn Property="x => x.Level" />
-                                        <PropertyColumn Property="x => x.ConstructionStartTime" Title="Construction Time" />
-                                        <PropertyColumn Property="x => x.ConstructionDuration" Title="Construction Duration" />
                                         <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
                                     </Columns>
                                 </MudDataGrid>
