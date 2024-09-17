@@ -66,8 +66,8 @@ internal class Program
             logger.MinimumLevel.Is(LogEventLevel.Debug)
             .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + "/logs/log.json", rollingInterval: RollingInterval.Day, shared: true)
             .WriteTo.Console();
+            
         });
-
         Log.Debug("Logger: Initialised.");
     }
 }

@@ -11,9 +11,11 @@
 
 @implements IAsyncDisposable
 @attribute [Authorize]
+@attribute [StreamRendering]
 
 @inject NavigationManager _nav
 @inject ISender _mediator
+@inject ISnackbar _snackbar
 @inject GameTickService gameTickService
 
 @if (_holdings is null) {
@@ -51,17 +53,7 @@ else {
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
-                            @if (_holdings[_selectedIndex].Buildings.Count > 0) {
-                                <MudDataGrid Items="_holdings[_selectedIndex].Buildings">
-                                    <Columns>
-                                        <PropertyColumn Property="x => x.Id" Title="Id" />
-                                        <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
-                                        <PropertyColumn Property="x => x.Name" />
-                                        <PropertyColumn Property="x => x.Level" />
-                                        <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
-                                    </Columns>
-                                </MudDataGrid>
-                            }
+                            <BuildingsDataGrid Holdings="_holdings" SelectedIndex="_selectedIndex"></BuildingsDataGrid>
                         </MudExpansionPanel>
                     </MudExpansionPanels>
                 </MudPaper>
@@ -73,6 +65,7 @@ else {
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private MudDataGrid<Building> _buildingsMudDataGrid;
     private List<Holding>? _holdings = null;
     private int _selectedIndex;
     private string? _playerId;
@@ -85,22 +78,20 @@ else {
             var state = await AuthenticationState;
             _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
             if (_playerId is not null) {
-                _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
-                if (_holdings.Count > 0) {
-                    _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
-                    _holdings[_selectedIndex].Resources = await _mediator.Send(new GetResourcesByHoldingIdQuery(_holdings[_selectedIndex].Id));
-                }
+                _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
             }
         }
 
         gameTickService.OnTickUpdated += OnTickUpdated;
-        
+
         await base.OnInitializedAsync();
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
     {
         gameTickService.OnTickUpdated -= OnTickUpdated;
+        _holdings = null;
+        _playerId = null;
         return ValueTask.CompletedTask;
     }
 
@@ -108,26 +99,32 @@ else {
     {
         if (_playerId is null) return;
         await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
-        _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
         StateHasChanged();
     }
 
     private async Task CreateBuilding()
     {
+        if (_playerId is null) return;
+        if (_holdings is null) return;
         await _mediator.Send(new CreateBuildingCommand(_holdings[_selectedIndex].Id, BuildingType.Lumberyard));
-        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
         StateHasChanged();
     }
 
     public async Task OnSelectedIndexChanged(int newIndex)
     {
+        if (_playerId is null) return;
         _selectedIndex = newIndex;
-        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
         StateHasChanged();
     }
     public async Task OnTickUpdated()
     {
-        _holdings[_selectedIndex].Buildings = await _mediator.Send(new GetBuildingsByHoldingIdQuery(_holdings[_selectedIndex].Id));
+        if (_playerId is null) return;
+
+        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
+        _snackbar.Add("Tick");
         await InvokeAsync(StateHasChanged);
     }
 }

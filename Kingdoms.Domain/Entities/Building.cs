@@ -18,7 +18,9 @@ public class Building
     public int Level { get; set; } = 1;
     public bool IsConstructed { get; set; }
     public DateTime? ConstructionStartTime { get; private set; }
-    public int ConstructionDuration { get; private set; } = 100;
+    public int ConstructionDuration { get; private set; } = 10;
+
+    public int ProductionRate { get; set; }
 
     public Building(Guid id, Guid holdingId, BuildingType type)
     {
@@ -27,5 +29,19 @@ public class Building
         Type = type;
         Name = Type.ToString();
         ConstructionStartTime = DateTime.Now;
+
+        switch (Type) {
+            case BuildingType.Lumberyard:
+                ProductionRate = 10 * Level;
+                break;
+
+            case BuildingType.Quarry:
+                ProductionRate = 5 * Level;
+                break;
+
+            case BuildingType.Mine:
+                ProductionRate = 3 * Level;
+                break;
+        }
     }
 }

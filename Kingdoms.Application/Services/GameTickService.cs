@@ -1,6 +1,7 @@
 ﻿using Kingdoms.Application.Features.Game.Commands;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Kingdoms.Application.Services;
 
@@ -29,17 +30,18 @@ public class GameTickService(IServiceProvider serviceProvider)
     private async Task Start()
     {
         while (true) {
-            await Task.Delay(TimeSpan.FromSeconds(_tickRate));
+            Log.Debug("GameTickService: Tick!");
+            Tick += 1;
             using (var scope = _serviceProvider.CreateScope()) {
                 var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
                 await mediator.Send(new UpdateBuildingsConstructionCommand());
+                await mediator.Send(new UpdateBuildingsProductionCommand());
             }
-
-            Tick += 1;
 
             if (OnTickUpdated != null) {
                 await Task.WhenAll(OnTickUpdated.GetInvocationList().Cast<Func<Task>>().Select(del => del()));
             }
+            await Task.Delay(TimeSpan.FromSeconds(_tickRate));
         }
     }
 }

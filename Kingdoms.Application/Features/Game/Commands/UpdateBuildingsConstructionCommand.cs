@@ -9,18 +9,21 @@ internal class UpdateBuildingsConstructionCommandHandler(DatabaseContext databas
 {
     public async Task Handle(UpdateBuildingsConstructionCommand request, CancellationToken cancellationToken)
     {
-        if (databaseContext.Buildings.Count() != 0) {
-            // Update building construction
-            var buildingsUnderConstruction = databaseContext.Buildings.Where(b => !b.IsConstructed && b.ConstructionStartTime.HasValue).ToList();
+        var buildingsUnderConstruction = databaseContext.Buildings
+            .Where(b => !b.IsConstructed && b.ConstructionStartTime.HasValue)
+            .ToList();
 
-            foreach (var building in buildingsUnderConstruction) {
-                if (building.ConstructionStartTime == null) return;
+        foreach (var building in buildingsUnderConstruction) {
+            if (building.ConstructionStartTime == null)
+                continue;
 
-                var elapsedTime = DateTime.Now - building.ConstructionStartTime.Value;
-                if (elapsedTime.TotalSeconds >= building.ConstructionDuration) {
-                    building.IsConstructed = true;
-                }
+            var elapsedTime = DateTime.Now - building.ConstructionStartTime.Value;
+            if (elapsedTime.TotalSeconds >= building.ConstructionDuration) {
+                building.IsConstructed = true;
             }
+        }
+
+        if (buildingsUnderConstruction.Any()) {
             await databaseContext.SaveChangesAsync();
         }
     }

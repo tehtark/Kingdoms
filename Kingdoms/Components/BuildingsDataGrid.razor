@@ -1,0 +1,26 @@
+﻿@if (Holdings is not null && Holdings[SelectedIndex]?.Buildings?.Count() > 0) {
+    <MudDataGrid @ref="_dataGrid" Items="Holdings[SelectedIndex].Buildings">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="Id" />
+            <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Level" />
+            <PropertyColumn Property="x => x.ProductionRate" />
+            <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter]
+    public List<Holding>? Holdings { get; set; }
+
+    [Parameter]
+    public int SelectedIndex { get; set; }
+
+    private MudDataGrid<Building>? _dataGrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+}
