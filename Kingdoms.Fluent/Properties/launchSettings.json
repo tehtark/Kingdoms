@@ -1,31 +1,30 @@
 {
-    "$schema": "http://json.schemastore.org/launchsettings.json",
+  "$schema": "http://json.schemastore.org/launchsettings.json",
     "iisSettings": {
-        "windowsAuthentication": false,
-        "anonymousAuthentication": true,
-        "iisExpress": {
-            "applicationUrl": "http://localhost:43429",
-            "sslPort": 44313
-        }
+      "windowsAuthentication": false,
+      "anonymousAuthentication": true,
+      "iisExpress": {
+        "applicationUrl": "http://localhost:20172",
+        "sslPort": 44388
+      }
     },
     "profiles": {
         "start": {
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": true,
-            "applicationUrl": "https://localhost:7256;http://localhost:5140",
+            "applicationUrl": "https://localhost:7175;http://localhost:5079",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "SQL_CONNTECTION_STRING": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=KingdomsTest;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False",
-                "AUTH_DOMAIN": "tark.uk.auth0.com",
-                "AUTH_CLIENT_ID": "iqwofqR6w59Uta5euZxQFOdk0Ts5YRU6"
-            }
-        },
+                "SQL_CONNTECTION_STRING": "",
+                "AUTH_DOMAIN": "",
+                "AUTH_CLIENT_ID": ""
+            },
         "http": {
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": true,
-            "applicationUrl": "http://localhost:5140",
+            "applicationUrl": "http://localhost:5079",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
@@ -34,7 +33,7 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": true,
-            "applicationUrl": "https://localhost:7256;http://localhost:5140",
+            "applicationUrl": "https://localhost:7175;http://localhost:5079",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
@@ -47,4 +46,4 @@
             }
         }
     }
-}
+  }
