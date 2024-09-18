@@ -47,9 +47,9 @@ else {
                             Type: @_holdings[_selectedIndex].Type<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Resources">
-                            Wood: @_holdings[_selectedIndex].Resources.Wood<br />
-                            Stone: @_holdings[_selectedIndex].Resources.Stone<br />
-                            Iron: @_holdings[_selectedIndex].Resources.Iron<br />
+                            Wood: @_holdings[_selectedIndex].Resources?.Wood<br />
+                            Stone: @_holdings[_selectedIndex].Resources?.Stone<br />
+                            Iron: @_holdings[_selectedIndex].Resources?.Iron<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
@@ -65,7 +65,6 @@ else {
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
-    private MudDataGrid<Building> _buildingsMudDataGrid;
     private List<Holding>? _holdings = null;
     private int _selectedIndex;
     private string? _playerId;
@@ -78,7 +77,7 @@ else {
             var state = await AuthenticationState;
             _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
             if (_playerId is not null) {
-                _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
+                await RefreshData();
             }
         }
 
@@ -95,12 +94,28 @@ else {
         return ValueTask.CompletedTask;
     }
 
+    #region Event Handlers
+
+    public async Task OnTickUpdated()
+    {
+        _snackbar.Add("Tick");
+        await RefreshData();
+    }
+
+    public async Task OnSelectedIndexChanged(int newIndex)
+    {
+        _selectedIndex = newIndex;
+        await RefreshData();
+    }
+
+    #endregion
+    #region Button Handlers
+
     private async Task CreateHolding()
     {
         if (_playerId is null) return;
         await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
-        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
-        StateHasChanged();
+        await RefreshData();
     }
 
     private async Task CreateBuilding()
@@ -108,23 +123,18 @@ else {
         if (_playerId is null) return;
         if (_holdings is null) return;
         await _mediator.Send(new CreateBuildingCommand(_holdings[_selectedIndex].Id, BuildingType.Lumberyard));
-        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
-        StateHasChanged();
+        await RefreshData();
     }
 
-    public async Task OnSelectedIndexChanged(int newIndex)
-    {
-        if (_playerId is null) return;
-        _selectedIndex = newIndex;
-        _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
-        StateHasChanged();
-    }
-    public async Task OnTickUpdated()
-    {
-        if (_playerId is null) return;
+    #endregion
+    #region Data Handlers
 
+    private async Task RefreshData()
+    {
+        if (_playerId is null) return;
         _holdings = (await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId))).ToList();
-        _snackbar.Add("Tick");
         await InvokeAsync(StateHasChanged);
     }
+
+    #endregion
 }
