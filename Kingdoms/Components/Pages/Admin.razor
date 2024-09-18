@@ -9,13 +9,13 @@
 @inject GameTickService gameTickServices
 
 @if (!_isLoaded) {
-    <Loading />
+        <Loading />
 }
 else {
-    <h3>Admin</h3>
+        <h3>Admin</h3>
 
     @if (_tick is not null) {
-        <h4>@_tick</h4>
+                <h4>@_tick</h4>
     }
 }
 
