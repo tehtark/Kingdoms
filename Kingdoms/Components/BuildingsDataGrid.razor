@@ -2,8 +2,7 @@
     <Loading />
 }
 else {
-
-    <MudDataGrid ReadOnly="false" Items="Holdings[SelectedIndex]?.Buildings">
+    <MudDataGrid ReadOnly="false" Dense @key="Holdings" Items="Holdings[SelectedIndex]?.Buildings">
         <Columns>
             <PropertyColumn Property="x => x.Id" Title="Id" />
             <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
@@ -24,8 +23,9 @@ else {
     [EditorRequired]
     public int SelectedIndex { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
         StateHasChanged();
+        return Task.CompletedTask;
     }
 }
