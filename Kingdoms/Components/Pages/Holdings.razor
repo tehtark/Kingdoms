@@ -53,7 +53,16 @@ else {
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
-                            <BuildingsDataGrid Holdings="_holdings" SelectedIndex="_selectedIndex" />
+                            <MudDataGrid ReadOnly="false" Dense @key="_holdings" Items="_holdings[_selectedIndex]?.Buildings">
+                                <Columns>
+                                    <PropertyColumn Property="x => x.Id" Title="Id" />
+                                    <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
+                                    <PropertyColumn Property="x => x.Name" />
+                                    <PropertyColumn Property="x => x.Level" />
+                                    <PropertyColumn Property="x => x.ProductionRate" />
+                                    <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
+                                </Columns>
+                            </MudDataGrid>
                         </MudExpansionPanel>
                     </MudExpansionPanels>
                 </MudPaper>
