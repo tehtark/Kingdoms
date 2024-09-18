@@ -64,9 +64,10 @@ internal class Program
     {
         host.UseSerilog((context, logger) => {
             logger.MinimumLevel.Is(LogEventLevel.Debug)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information) // Filter specific namespace
+            .MinimumLevel.Override("MudBlazor", LogEventLevel.Information) // Filter specific namespace
             .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + "/logs/log.json", rollingInterval: RollingInterval.Day, shared: true)
             .WriteTo.Console();
-            
         });
         Log.Debug("Logger: Initialised.");
     }

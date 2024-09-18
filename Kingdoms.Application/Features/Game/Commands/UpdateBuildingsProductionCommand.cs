@@ -11,9 +11,13 @@ internal class UpdateBuildingsProductionCommandHandler(DatabaseContext databaseC
 {
     public async Task Handle(UpdateBuildingsProductionCommand request, CancellationToken cancellationToken)
     {
-        var holdings = await databaseContext.Holdings.Include(h => h.Buildings.Where(c => c.IsConstructed == true)).Include(r => r.Resources).ToListAsync();
+        var holdings = await databaseContext.Holdings
+            .Include(h => h.Buildings.Where(c => c.IsConstructed == true))
+            .Include(r => r.Resources)
+            .ToListAsync(cancellationToken);
 
         foreach (var holding in holdings) {
+            if (holding.Buildings == null) continue;
             foreach (var building in holding.Buildings) {
                 switch (building.Type) {
                     case BuildingType.Lumberyard:

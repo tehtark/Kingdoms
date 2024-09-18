@@ -1,5 +1,6 @@
 ﻿using Kingdoms.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Kingdoms.Infrastructure.Database;
 
@@ -10,10 +11,28 @@ public class DatabaseContext : DbContext
     public DbSet<Building> Buildings { get; set; }
     public DbSet<Resources> Resources { get; set; }
 
-    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=KingdomsTest;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    private readonly string _connectionString = Environment.GetEnvironmentVariable("SQL_CONNTECTION_STRING");
 
     public DatabaseContext()
     {
+        this.SaveChangesFailed += OnSaveChangesFailed;
+        this.SavedChanges += OnSavedChanges;
+        this.SavingChanges += OnSavingChanges; ;
+    }
+
+    private void OnSavingChanges(object? sender, SavingChangesEventArgs e)
+    {
+        Log.Debug("OnSavingChanges()");
+    }
+
+    private void OnSavedChanges(object? sender, SavedChangesEventArgs e)
+    {
+        Log.Debug("OnSavedChanges()");
+    }
+
+    private void OnSaveChangesFailed(object? sender, SaveChangesFailedEventArgs e)
+    {
+        Log.Debug("OnSaveChangesFailed()");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer(_connectionString);

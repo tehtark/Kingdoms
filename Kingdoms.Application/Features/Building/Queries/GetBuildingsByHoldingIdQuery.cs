@@ -1,5 +1,6 @@
 ﻿using Kingdoms.Infrastructure.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kingdoms.Application.Features.Building.Queries;
 
@@ -7,8 +8,10 @@ public record GetBuildingsByHoldingIdQuery(Guid HoldingId) : IRequest<List<Domai
 
 internal class GetBuildingsByHoldingIdQueryHandler(DatabaseContext databaseContext) : IRequestHandler<GetBuildingsByHoldingIdQuery, List<Domain.Entities.Building>>
 {
-    public Task<List<Domain.Entities.Building>> Handle(GetBuildingsByHoldingIdQuery request, CancellationToken cancellationToken)
+    public async Task<List<Domain.Entities.Building>> Handle(GetBuildingsByHoldingIdQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(databaseContext.Buildings.Where(h => h.HoldingId == request.HoldingId).ToList());
+        return await databaseContext.Buildings
+            .Where(h => h.HoldingId == request.HoldingId)
+            .ToListAsync();
     }
 }
