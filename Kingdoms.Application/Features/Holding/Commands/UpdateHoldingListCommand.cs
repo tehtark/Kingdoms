@@ -4,10 +4,12 @@ using MediatR;
 namespace Kingdoms.Application.Features.Holding.Commands;
 public record UpdateHoldingListCommand(List<Domain.Entities.Holding> Holdings) : IRequest;
 
-internal class UpdateHoldingListCommandHandler(DatabaseContext databaseContext) : IRequestHandler<UpdateHoldingListCommand>
+internal class UpdateHoldingListCommandHandler : IRequestHandler<UpdateHoldingListCommand>
 {
     public Task Handle(UpdateHoldingListCommand request, CancellationToken cancellationToken)
     {
+        using var databaseContext = new DatabaseContext();
+
         var currentHoldings = request.Holdings;
         var updatedHoldings = databaseContext.Holdings.ToList();
 

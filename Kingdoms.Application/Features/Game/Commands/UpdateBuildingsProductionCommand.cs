@@ -7,10 +7,12 @@ namespace Kingdoms.Application.Features.Game.Commands;
 
 public record UpdateBuildingsProductionCommand : IRequest;
 
-internal class UpdateBuildingsProductionCommandHandler(DatabaseContext databaseContext) : IRequestHandler<UpdateBuildingsProductionCommand>
+internal class UpdateBuildingsProductionCommandHandler : IRequestHandler<UpdateBuildingsProductionCommand>
 {
     public async Task Handle(UpdateBuildingsProductionCommand request, CancellationToken cancellationToken)
     {
+        using var databaseContext = new DatabaseContext();
+
         var holdings = await databaseContext.Holdings
             .Include(h => h.Buildings.Where(c => c.IsConstructed == true))
             .Include(r => r.Resources)

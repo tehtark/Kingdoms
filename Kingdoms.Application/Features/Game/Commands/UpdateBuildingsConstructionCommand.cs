@@ -5,10 +5,12 @@ namespace Kingdoms.Application.Features.Game.Commands;
 
 public record UpdateBuildingsConstructionCommand : IRequest;
 
-internal class UpdateBuildingsConstructionCommandHandler(DatabaseContext databaseContext) : IRequestHandler<UpdateBuildingsConstructionCommand>
+internal class UpdateBuildingsConstructionCommandHandler : IRequestHandler<UpdateBuildingsConstructionCommand>
 {
     public async Task Handle(UpdateBuildingsConstructionCommand request, CancellationToken cancellationToken)
     {
+        using var databaseContext = new DatabaseContext();
+
         var buildingsUnderConstruction = databaseContext.Buildings
             .Where(b => !b.IsConstructed && b.ConstructionStartTime.HasValue)
             .ToList();

@@ -9,60 +9,63 @@ using Serilog.Events;
 
 internal class Program
 {
+    private static WebApplicationBuilder _builder;
+    private static WebApplication _app;
+
     private static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        _builder = WebApplication.CreateBuilder(args);
 
-        InitialiseLogger(builder.Host);
+        InitialiseLogger();
 
-        builder.Services.AddAuth0WebAppAuthentication(options => {
+        _builder.Services.AddAuth0WebAppAuthentication(options => {
             options.Domain = Environment.GetEnvironmentVariable("AUTH_DOMAIN");
             options.ClientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID");
         });
 
         // Add MudBlazor services
-        builder.Services.AddMudServices();
+        _builder.Services.AddMudServices();
 
         // Add services to the container.
-        builder.Services.AddRazorComponents()
+        _builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        builder.Services.AddApplication();
+        _builder.Services.AddApplication();
 
-        var app = builder.Build();
+        _app = _builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment()) {
-            app.UseExceptionHandler("/Error", createScopeForErrors: true);
+        if (!_app.Environment.IsDevelopment()) {
+            _app.UseExceptionHandler("/Error", createScopeForErrors: true);
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
+            _app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
+        _app.UseHttpsRedirection();
 
-        app.UseStaticFiles();
-        app.UseAntiforgery();
+        _app.UseStaticFiles();
+        _app.UseAntiforgery();
 
-        app.MapGet("/Account/Login", async (HttpContext httpContext, string redirectUri = "/") => {
+        _app.MapGet("/Account/Login", async (HttpContext httpContext, string redirectUri = "/") => {
             var authenticationProperties = new LoginAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
             await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
         });
 
-        app.MapGet("/Account/Logout", async (HttpContext httpContext, string redirectUri = "/") => {
+        _app.MapGet("/Account/Logout", async (HttpContext httpContext, string redirectUri = "/") => {
             var authenticationProperties = new LogoutAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
             await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         });
 
-        app.MapRazorComponents<App>()
+        _app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();
 
-        app.Run();
+        _app.Run();
     }
 
-    private static void InitialiseLogger(IHostBuilder host)
+    private static void InitialiseLogger()
     {
-        host.UseSerilog((context, logger) => {
+        _builder.Host.UseSerilog((context, logger) => {
             logger.MinimumLevel.Is(LogEventLevel.Debug)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information) // Filter specific namespace
             .MinimumLevel.Override("MudBlazor", LogEventLevel.Information) // Filter specific namespace

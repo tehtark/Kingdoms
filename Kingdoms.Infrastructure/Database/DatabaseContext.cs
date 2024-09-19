@@ -15,9 +15,6 @@ public class DatabaseContext : DbContext
 
     public DatabaseContext()
     {
-        this.SaveChangesFailed += OnSaveChangesFailed;
-        this.SavedChanges += OnSavedChanges;
-        this.SavingChanges += OnSavingChanges; ;
     }
 
     private void OnSavingChanges(object? sender, SavingChangesEventArgs e)

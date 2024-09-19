@@ -7,8 +7,8 @@ public record GetTickQuery : IRequest<int>;
 
 internal class GetTickQueryHandler(GameTickService gameTickService) : IRequestHandler<GetTickQuery, int>
 {
-    public async Task<int> Handle(GetTickQuery request, CancellationToken cancellationToken)
+    public Task<int> Handle(GetTickQuery request, CancellationToken cancellationToken)
     {
-        return gameTickService.Tick;
+        return Task.FromResult(gameTickService.Tick);
     }
 }

@@ -143,6 +143,7 @@ else {
     {
         if (_playerId is null) return;
         _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+
         await InvokeAsync(StateHasChanged);
     }
 

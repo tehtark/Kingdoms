@@ -6,10 +6,12 @@ namespace Kingdoms.Application.Features.Holding.Queries;
 
 public record GetHoldingsByPlayerIdQuery(string PlayerId) : IRequest<List<Domain.Entities.Holding>>;
 
-internal class GetHoldingsByPlayerIdQueryHandler(DatabaseContext databaseContext) : IRequestHandler<GetHoldingsByPlayerIdQuery, List<Domain.Entities.Holding>>
+internal class GetHoldingsByPlayerIdQueryHandler : IRequestHandler<GetHoldingsByPlayerIdQuery, List<Domain.Entities.Holding>>
 {
     public async Task<List<Domain.Entities.Holding>> Handle(GetHoldingsByPlayerIdQuery request, CancellationToken cancellationToken)
     {
+        using var databaseContext = new DatabaseContext();
+
         return await databaseContext.Holdings
             .Where(h => h.PlayerId == request.PlayerId)
             .Include(b => b.Buildings)
