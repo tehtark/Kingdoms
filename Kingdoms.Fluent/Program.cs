@@ -1,11 +1,16 @@
+using Auth0.AspNetCore.Authentication;
 using Kingdoms.Fluent.Components;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Serilog;
 using Serilog.Events;
+using Kingdoms.Application;
 
 internal class Program
 {
     private static WebApplicationBuilder? _builder;
+    private static WebApplication? _app;
 
     private static void Main(string[] args)
     {
@@ -14,24 +19,23 @@ internal class Program
         InitialiseLogger();
         InitialiseServices();
 
-        var app = _builder.Build();
+        _app = _builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment()) {
-            app.UseExceptionHandler("/Error", createScopeForErrors: true);
+        if (!_app.Environment.IsDevelopment()) {
+            _app.UseExceptionHandler("/Error", createScopeForErrors: true);
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
+            _app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
+        _app.UseHttpsRedirection();
 
-        app.UseStaticFiles();
-        app.UseAntiforgery();
+        _app.UseStaticFiles();
+        _app.UseAntiforgery();
 
-        app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
+        MapComponents();
 
-        app.Run();
+        _app.Run();
     }
 
     /// <summary>
@@ -40,8 +44,20 @@ internal class Program
     private static void InitialiseServices()
     {
         if (_builder is null) throw new InvalidOperationException("The WebApplicationBuilder is not initialised.");
+
+        // Default services
         _builder.Services.AddRazorComponents().AddInteractiveServerComponents();
         _builder.Services.AddFluentUIComponents();
+        _builder.Services.AddDataGridEntityFrameworkAdapter();
+
+        // Auth0 services
+        _builder.Services.AddAuth0WebAppAuthentication(options => {
+            options.Domain = Environment.GetEnvironmentVariable("AUTH_DOMAIN");
+            options.ClientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID");
+        });
+
+        // Application Layer services
+        _builder.Services.AddApplication();
     }
 
     private static void InitialiseLogger()
@@ -55,5 +71,26 @@ internal class Program
             .WriteTo.Console();
         });
         Log.Debug("Logger: Initialised.");
+    }
+
+    private static void MapComponents()
+    {
+        if (_app is null) throw new InvalidOperationException("The WebApplication is not initialised.");
+
+        // Default components
+        _app.MapRazorComponents<App>()
+            .AddInteractiveServerRenderMode();
+
+        // Auth0 components
+        _app.MapGet("/Account/Login", async (HttpContext httpContext, string redirectUri = "/") => {
+            var authenticationProperties = new LoginAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
+            await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+        });
+
+        _app.MapGet("/Account/Logout", async (HttpContext httpContext, string redirectUri = "/") => {
+            var authenticationProperties = new LogoutAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
+            await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        });
     }
 }

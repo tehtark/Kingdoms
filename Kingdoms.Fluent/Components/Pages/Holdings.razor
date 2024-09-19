@@ -1,0 +1,110 @@
+﻿@page "/holdings"
+
+@using Kingdoms.Application.Features.Holding.Commands
+@using Kingdoms.Application.Features.Holding.Queries
+@using Kingdoms.Application.Features.Player.Queries
+@using Kingdoms.Application.Features.Building.Commands
+@using Kingdoms.Application.Features.Building.Queries
+@using Kingdoms.Application.Features.Resources.Queries
+@using Kingdoms.Application.Services
+@using Kingdoms.Domain.Entities
+@using Kingdoms.Domain.Enums
+@using MediatR
+@using Microsoft.AspNetCore.Authorization
+
+@implements IAsyncDisposable
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject NavigationManager _nav
+@inject ISender _mediator
+@inject GameTickService gameTickService
+
+@if (_holdings is null) {
+    <Loading />
+}
+else {
+    <FluentSelect TOption="Holding"
+                  Label="Select a Holding"
+                  Items="@_holdings"
+                  Placeholder="Select a holding..."
+                  OptionText="@(p => p.Id.ToString())"
+                  @bind-SelectedOption="_selectedHolding" />
+
+    <FluentButton OnClick="CreateHolding">Create Holding</FluentButton>
+    <FluentButton OnClick="CreateBuilding">Create Building</FluentButton>
+    @if (_selectedHolding != null) {
+
+        <FluentDataGrid @ref=_datagrid Items="@_selectedHolding.Buildings.AsQueryable()">
+            <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.Level)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.IsConstructed)" Sortable="true" />
+        </FluentDataGrid>
+    }
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private string? _playerId;
+
+    private List<Holding>? _holdings = null;
+    private Holding? _selectedHolding = null;
+    FluentDataGrid<Building>? _datagrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(Globals.DefaultDelay);
+
+        if (AuthenticationState is not null) {
+            var state = await AuthenticationState;
+            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+            if (_playerId is not null) {
+                await RefreshData();
+            }
+        }
+
+        gameTickService.OnTickUpdated += OnTickUpdated;
+
+        await base.OnInitializedAsync();
+    }
+
+    ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        gameTickService.OnTickUpdated -= OnTickUpdated;
+        _holdings = null;
+        _playerId = null;
+        return ValueTask.CompletedTask;
+    }
+
+
+    public async Task OnTickUpdated()
+    {
+        await RefreshData();
+    }
+
+    private async Task CreateHolding()
+    {
+        if (_playerId is null) return;
+        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
+        await RefreshData();
+    }
+    private async Task CreateBuilding()
+    {
+        if (_playerId is null) return;
+        if (_selectedHolding is null) return;
+        await _mediator.Send(new CreateBuildingCommand(_selectedHolding.Id, BuildingType.Lumberyard));
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        if (_playerId is null) return;
+        _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+        if (_datagrid is not null) {
+            await InvokeAsync(_datagrid.RefreshDataAsync);
+        }
+        // await InvokeAsync(StateHasChanged);
+    }
+
+}
