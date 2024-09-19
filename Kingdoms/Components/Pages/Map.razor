@@ -1,0 +1,16 @@
+﻿@page "/map"
+
+<SfMaps>
+    <MapsLayers>
+        <MapsLayer TValue="object" ShapeData="@ShapeData" />
+    </MapsLayers>
+</SfMaps>
+
+@code {
+    public string ShapeData { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+}

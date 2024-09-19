@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using MudBlazor.Services;
 using Serilog;
 using Serilog.Events;
+using Syncfusion.Blazor;
 
 internal class Program
 {
@@ -25,6 +26,8 @@ internal class Program
 
         // Add MudBlazor services
         _builder.Services.AddMudServices();
+
+        _builder.Services.AddSyncfusionBlazor();
 
         // Add services to the container.
         _builder.Services.AddRazorComponents()
