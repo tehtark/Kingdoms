@@ -17,7 +17,7 @@ public class GameTickService(IServiceProvider serviceProvider)
         }
     }
 
-    private readonly int _tickRate = 10;
+    private readonly int _tickRate = 15;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public event Func<Task> OnTickUpdated;
