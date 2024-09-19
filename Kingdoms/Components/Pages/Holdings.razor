@@ -7,7 +7,12 @@
 @using Kingdoms.Application.Features.Building.Queries
 @using Kingdoms.Application.Features.Resources.Queries
 @using Kingdoms.Application.Services
+@using Kingdoms.Domain.Entities
 @using Kingdoms.Domain.Enums
+@using MediatR
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
 
 @implements IAsyncDisposable
 @attribute [Authorize]
@@ -52,7 +57,7 @@ else {
                             Iron: @_holdings[_selectedIndex].Resources?.Iron<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateBuilding">Create Building</MudButton>
+                            <BuildPopup HoldingId="_holdings[_selectedIndex].Id" OnBuildingConstructed="RefreshData" />
                             <MudDataGrid ReadOnly="false" Dense @key="_holdings" Items="_holdings[_selectedIndex]?.Buildings">
                                 <Columns>
                                     <PropertyColumn Property="x => x.Id" Title="Id" />
@@ -125,14 +130,6 @@ else {
     {
         if (_playerId is null) return;
         await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
-        await RefreshData();
-    }
-
-    private async Task CreateBuilding()
-    {
-        if (_playerId is null) return;
-        if (_holdings is null) return;
-        await _mediator.Send(new CreateBuildingCommand(_holdings[_selectedIndex].Id, BuildingType.Lumberyard));
         await RefreshData();
     }
 
