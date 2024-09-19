@@ -16,9 +16,9 @@
             "applicationUrl": "https://localhost:7256;http://localhost:5140",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "SQL_CONNTECTION_STRING": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=KingdomsTest;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False",
-                "AUTH_DOMAIN": "tark.uk.auth0.com",
-                "AUTH_CLIENT_ID": "iqwofqR6w59Uta5euZxQFOdk0Ts5YRU6"
+                "SQL_CONNTECTION_STRING": "",
+                "AUTH_DOMAIN": "",
+                "AUTH_CLIENT_ID": ""
             }
         },
         "http": {
