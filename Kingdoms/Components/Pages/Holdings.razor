@@ -47,9 +47,7 @@ else {
                 <MudPaper>
                     <MudExpansionPanels MultiExpansion="true">
                         <MudExpansionPanel Expanded="true" Text="Information">
-                            Id: @_holdings[_selectedIndex].Id<br />
-                            Owner: @_holdings[_selectedIndex].PlayerId<br />
-                            Type: @_holdings[_selectedIndex].Type<br />
+                            <HoldingInformation Holding="_holdings[_selectedIndex]" />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Resources">
                             Wood: @_holdings[_selectedIndex].Resources?.Wood<br />
@@ -57,17 +55,7 @@ else {
                             Iron: @_holdings[_selectedIndex].Resources?.Iron<br />
                         </MudExpansionPanel>
                         <MudExpansionPanel Expanded="true" Text="Buildings">
-                            <BuildPopup HoldingId="_holdings[_selectedIndex].Id" OnBuildingConstructed="RefreshData" />
-                            <MudDataGrid ReadOnly="false" Dense @key="_holdings" Items="_holdings[_selectedIndex]?.Buildings">
-                                <Columns>
-                                    <PropertyColumn Property="x => x.Id" Title="Id" />
-                                    <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
-                                    <PropertyColumn Property="x => x.Name" />
-                                    <PropertyColumn Property="x => x.Level" />
-                                    <PropertyColumn Property="x => x.ProductionRate" />
-                                    <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
-                                </Columns>
-                            </MudDataGrid>
+                            <BuildingsDataGrid Buildings="_holdings[_selectedIndex].Buildings" HoldingId="_holdings[_selectedIndex].Id" OnBuildingConstructed="RefreshData" />
                         </MudExpansionPanel>
                     </MudExpansionPanels>
                 </MudPaper>
@@ -109,8 +97,6 @@ else {
         return ValueTask.CompletedTask;
     }
 
-    #region Event Handlers
-
     public async Task OnTickUpdated()
     {
         await RefreshData();
@@ -122,18 +108,12 @@ else {
         await RefreshData();
     }
 
-    #endregion
-    #region Button Handlers
-
     private async Task CreateHolding()
     {
         if (_playerId is null) return;
         await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
         await RefreshData();
     }
-
-    #endregion
-    #region Data Handlers
 
     private async Task RefreshData()
     {
@@ -143,5 +123,4 @@ else {
         await InvokeAsync(StateHasChanged);
     }
 
-    #endregion
 }

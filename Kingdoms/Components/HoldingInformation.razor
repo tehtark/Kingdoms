@@ -1,0 +1,12 @@
+﻿Id: @Holding.Id
+<br />
+Owner: @Holding.PlayerId
+<br />
+Type: @Holding.Type
+<br />
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public Holding? Holding { get; set; }
+}

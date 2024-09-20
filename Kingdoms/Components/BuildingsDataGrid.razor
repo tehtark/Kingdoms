@@ -1,10 +1,24 @@
 ﻿@using Kingdoms.Application.Features.Building.Commands
-@using Kingdoms.Application.Features.Holding.Queries
 @using Kingdoms.Domain.Enums
-@inject ISender _mediator
-<MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Secondary" OnClick="ToggleOverlay">Build</MudButton>
 
-<MudPopover TransformOrigin="Origin.CenterCenter"  Open="_open" Fixed="true" Class="px-4 pt-4">
+@inject ISender _mediator
+
+<MudDataGrid T="Building" Dense Items="Buildings">
+    <ToolBarContent>
+        <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="ToggleOverlay" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Remove" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Level" />
+        <PropertyColumn Property="x => x.ProductionRate" />
+        <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
+    </Columns>
+</MudDataGrid>
+
+<MudPopover TransformOrigin="Origin.CenterCenter" Open="_open" Fixed="true" Class="px-4 pt-4">
     <MudGrid Spacing="1">
         <MudItem xs="12">
             <MudSelect @bind-Value="_selectedType" Label="Select building.">
@@ -30,6 +44,10 @@
 @code {
     [Parameter]
     [EditorRequired]
+    public ICollection<Building>? Buildings { get; set; }
+
+    [Parameter]
+    [EditorRequired]
     public Guid HoldingId { get; set; }
 
     [Parameter]
@@ -49,4 +67,9 @@
         await ToggleOverlay();
         await OnBuildingConstructed.InvokeAsync();
     }
-} 
+    private async Task Remove()
+    {
+
+    }
+
+}
