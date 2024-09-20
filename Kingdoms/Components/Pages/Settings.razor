@@ -1,0 +1,43 @@
+﻿@page "/settings"
+
+@attribute [Authorize]
+
+@inject ISender _mediator
+
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Kingdoms.Application.Features.Player.Queries
+
+@if(Player is null) {
+    <Loading></Loading>
+} else {
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudField Label="Username" Variant="Variant.Text" >@Player.Username</MudField>
+    </MudItem>
+</MudGrid>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private string? _playerId;
+    private Player? Player;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(Globals.DefaultDelay);
+
+        if (AuthenticationState is not null) {
+            var state = await AuthenticationState;
+            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+            if (_playerId is not null) {
+                Player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
+            }
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+}
