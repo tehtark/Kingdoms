@@ -1,0 +1,19 @@
+﻿<MudGrid Spacing="4">
+    <MudItem xs="12">
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Expanded="true" Text="Player Information">
+                ID: @Player.Id<br />
+                Username: @Player.Username<br />
+                Level: @Player.Level<br />
+                Experience: @Player.Experience<br />
+                Gold: @Player.Gold
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public Player? Player { get; set; }
+}
