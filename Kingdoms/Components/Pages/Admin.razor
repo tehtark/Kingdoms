@@ -1,38 +1,57 @@
 ﻿@page "/admin"
 @using Kingdoms.Application.Features.Database.Commands
 @using Kingdoms.Application.Features.Game.Queries
+@using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Application.Services
 
 @attribute [Authorize]
 
 @implements IAsyncDisposable
 @inject ISender _mediator
+@inject NavigationManager _nav
 @inject ISnackbar _snackbar
 @inject GameTickService gameTickServices
 
 @if (!_isLoaded)
 {
-        <Loading />
+    <Loading />
 }
 else
 {
-        <h3>Admin</h3>
+    <h3>Admin</h3>
 
     @if (_tick is not null)
     {
-                <h4>@_tick</h4>
+        <h4>@_tick</h4>
     }
 
-        <MudButton OnClick="ResetDatabase">Reset Database</MudButton>
+    <MudButton OnClick="ResetDatabase">Reset Database</MudButton>
 }
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private string? _playerId;
+
     private bool _isLoaded = false;
     private int? _tick = null;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(Globals.DefaultDelay);
+
+        if (AuthenticationState is not null)
+        {
+            var state = await AuthenticationState;
+            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+            if (_playerId is not null)
+            {
+                if (_playerId != Environment.GetEnvironmentVariable("ADMIN_ID"))
+                {
+                    _nav.NavigateTo("/", true);
+                }
+            }
+        }
 
         _tick = await _mediator.Send(new GetTickQuery());
         gameTickServices.OnTickUpdated += GameTickServices_OnTickUpdated;

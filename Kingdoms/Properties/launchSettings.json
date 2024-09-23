@@ -19,7 +19,8 @@
         "SQL_CONNTECTION_STRING": "",
         "AUTH_DOMAIN": "",
         "AUTH_CLIENT_ID": "",
-        "SYNC_LICENSE": ""
+        "SYNC_LICENSE": "",
+        "ADMIN_ID": ""
       }
     },
     "http": {
