@@ -8,7 +8,8 @@ public static class ApplicationDependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(config => {
+        services.AddMediatR(config =>
+        {
             config.RegisterServicesFromAssembly(typeof(ApplicationDependencyInjection).Assembly);
         });
 

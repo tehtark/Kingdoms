@@ -15,17 +15,20 @@ internal class UpdateBuildingsConstructionCommandHandler : IRequestHandler<Updat
             .Where(b => !b.IsConstructed && b.ConstructionStartTime.HasValue)
             .ToList();
 
-        foreach (var building in buildingsUnderConstruction) {
+        foreach (var building in buildingsUnderConstruction)
+        {
             if (building.ConstructionStartTime == null)
                 continue;
 
             var elapsedTime = DateTime.Now - building.ConstructionStartTime.Value;
-            if (elapsedTime.TotalSeconds >= building.ConstructionDuration) {
+            if (elapsedTime.TotalSeconds >= building.ConstructionDuration)
+            {
                 building.IsConstructed = true;
             }
         }
 
-        if (buildingsUnderConstruction.Any()) {
+        if (buildingsUnderConstruction.Any())
+        {
             await databaseContext.SaveChangesAsync();
         }
     }

@@ -1,38 +1,27 @@
 ﻿@page "/map"
 
-<SfMaps >
-    <MapsLayers>
-        @*To map shape data name field and data source field*@
-        <MapsLayer ShapeData='new {dataOptions= "https://cdn.syncfusion.com/maps/map-data/world-map.json"}'
-                   ShapePropertyPath='new string[] {"name"}'
-                   DataSource="SecurityCouncilDetails"
-                   ShapeDataPath="Name" TValue="UNCouncilCountry">
-        </MapsLayer>
-    </MapsLayers>
-</SfMaps>
+@if (string.IsNullOrEmpty(_jsonUrl))
+{
+    <Loading />
+}
+else
+{
+    <div style="height: calc(100vh - (var(--mud-appbar-height))); width: calc(100vw - var(--mud-drawer-width)); overflow: hidden;">
+        <SfMaps Width="100%" Height="100%">
+            <MapsLayers>
+                <MapsLayer ShapeData='new {dataOptions= _jsonUrl }' TValue="string">
+                </MapsLayer>
+            </MapsLayers>
+        </SfMaps>
+    </div>
+}
 
 @code {
-    public List<UNCouncilCountry> SecurityCouncilDetails = new List<UNCouncilCountry>{
-         new UNCouncilCountry { Name= "China", Membership= "Permanent"},
-         new UNCouncilCountry { Name= "France", Membership= "Permanent" },
-         new UNCouncilCountry { Name= "Russia", Membership= "Permanent"},
-         new UNCouncilCountry { Name= "Kazakhstan", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Poland", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Sweden", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "United Kingdom", Membership= "Permanent"},
-         new UNCouncilCountry { Name= "United States", Membership= "Permanent"},
-         new UNCouncilCountry { Name= "Bolivia", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Eq. Guinea", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Ethiopia", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Côte d Ivoire", Membership= "Permanent"},
-         new UNCouncilCountry { Name= "Kuwait", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Netherlands", Membership= "Non-Permanent"},
-         new UNCouncilCountry { Name= "Peru", Membership= "Non-Permanent"}
-    };
+    private string? _jsonUrl;
 
-    public class UNCouncilCountry
+    protected override async Task OnInitializedAsync()
     {
-        public string Name { get; set; }
-        public string Membership { get; set; }
-    };
+        await Task.Delay(Globals.DefaultDelay);
+        _jsonUrl = "https://raw.githubusercontent.com/martinjc/UK-GeoJSON/refs/heads/master/json/eurostat/ew/nuts1.json";
+    }
 }

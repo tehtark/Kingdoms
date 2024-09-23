@@ -13,12 +13,17 @@ internal class UpdateHoldingListCommandHandler : IRequestHandler<UpdateHoldingLi
         var currentHoldings = request.Holdings;
         var updatedHoldings = databaseContext.Holdings.ToList();
 
-        foreach (var currentHolding in currentHoldings) {
-            foreach (var updatedHolding in updatedHoldings) {
+        foreach (var currentHolding in currentHoldings)
+        {
+            foreach (var updatedHolding in updatedHoldings)
+            {
                 //Resources
-                if (currentHolding.Id == updatedHolding.Id) {
-                    if (currentHolding.Resources.Id == updatedHolding.Resources.Id) {
-                        if (currentHolding.Resources.Wood != updatedHolding.Resources.Wood) {
+                if (currentHolding.Id == updatedHolding.Id)
+                {
+                    if (currentHolding.Resources.Id == updatedHolding.Resources.Id)
+                    {
+                        if (currentHolding.Resources.Wood != updatedHolding.Resources.Wood)
+                        {
                             currentHolding.Resources.Wood = updatedHolding.Resources.Wood;
                         }
                     }

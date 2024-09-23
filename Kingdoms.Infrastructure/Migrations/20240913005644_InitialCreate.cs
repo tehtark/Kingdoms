@@ -12,31 +12,36 @@ namespace Kingdoms.Infrastructure.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "Holdings",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlayerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Holdings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Players",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     Experience = table.Column<int>(type: "int", nullable: false),
                     Gold = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Players", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Buildings",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HoldingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
@@ -44,7 +49,8 @@ namespace Kingdoms.Infrastructure.Migrations
                     Level = table.Column<int>(type: "int", nullable: false),
                     IsConstructed = table.Column<bool>(type: "bit", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Buildings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Buildings_Holdings_HoldingId",

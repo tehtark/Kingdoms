@@ -19,7 +19,8 @@ internal class Program
 
         InitialiseLogger();
 
-        _builder.Services.AddAuth0WebAppAuthentication(options => {
+        _builder.Services.AddAuth0WebAppAuthentication(options =>
+        {
             options.Domain = Environment.GetEnvironmentVariable("AUTH_DOMAIN");
             options.ClientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID");
         });
@@ -28,6 +29,7 @@ internal class Program
         _builder.Services.AddMudServices();
 
         _builder.Services.AddSyncfusionBlazor();
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Environment.GetEnvironmentVariable("SYNC_LICENSE"));
 
         // Add services to the container.
         _builder.Services.AddRazorComponents()
@@ -38,7 +40,8 @@ internal class Program
         _app = _builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (!_app.Environment.IsDevelopment()) {
+        if (!_app.Environment.IsDevelopment())
+        {
             _app.UseExceptionHandler("/Error", createScopeForErrors: true);
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             _app.UseHsts();
@@ -49,12 +52,14 @@ internal class Program
         _app.UseStaticFiles();
         _app.UseAntiforgery();
 
-        _app.MapGet("/Account/Login", async (HttpContext httpContext, string redirectUri = "/") => {
+        _app.MapGet("/Account/Login", async (HttpContext httpContext, string redirectUri = "/") =>
+        {
             var authenticationProperties = new LoginAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
             await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
         });
 
-        _app.MapGet("/Account/Logout", async (HttpContext httpContext, string redirectUri = "/") => {
+        _app.MapGet("/Account/Logout", async (HttpContext httpContext, string redirectUri = "/") =>
+        {
             var authenticationProperties = new LogoutAuthenticationPropertiesBuilder().WithRedirectUri(redirectUri).Build();
             await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -68,7 +73,8 @@ internal class Program
 
     private static void InitialiseLogger()
     {
-        _builder.Host.UseSerilog((context, logger) => {
+        _builder.Host.UseSerilog((context, logger) =>
+        {
             logger.MinimumLevel.Is(LogEventLevel.Debug)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information) // Filter specific namespace
             .MinimumLevel.Override("MudBlazor", LogEventLevel.Information) // Filter specific namespace

@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@using Kingdoms.Application.Features.Database.Commands
 @using Kingdoms.Application.Features.Game.Queries
 @using Kingdoms.Application.Services
 
@@ -6,17 +7,23 @@
 
 @implements IAsyncDisposable
 @inject ISender _mediator
+@inject ISnackbar _snackbar
 @inject GameTickService gameTickServices
 
-@if (!_isLoaded) {
+@if (!_isLoaded)
+{
         <Loading />
 }
-else {
+else
+{
         <h3>Admin</h3>
 
-    @if (_tick is not null) {
+    @if (_tick is not null)
+    {
                 <h4>@_tick</h4>
     }
+
+        <MudButton OnClick="ResetDatabase">Reset Database</MudButton>
 }
 
 @code {
@@ -41,6 +48,12 @@ else {
     private async Task GameTickServices_OnTickUpdated()
     {
         _tick = await _mediator.Send(new GetTickQuery());
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task ResetDatabase()
+    {
+        await _mediator.Send(new ResetDatabaseCommand());
+        _snackbar.Add("Database reset!");
         await InvokeAsync(StateHasChanged);
     }
 

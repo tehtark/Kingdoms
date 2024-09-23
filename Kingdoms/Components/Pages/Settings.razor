@@ -8,15 +8,18 @@
 @using System.ComponentModel.DataAnnotations
 @using Kingdoms.Application.Features.Player.Queries
 
-@if(Player is null) {
+@if (Player is null)
+{
     <Loading></Loading>
-} else {
+}
+else
+{
 
-<MudGrid>
-    <MudItem xs="12">
-        <MudField Label="Username" Variant="Variant.Text" >@Player.Username</MudField>
-    </MudItem>
-</MudGrid>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudField Label="Username" Variant="Variant.Text">@Player.Username</MudField>
+        </MudItem>
+    </MudGrid>
 }
 
 @code {
@@ -29,10 +32,12 @@
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null) {
+        if (AuthenticationState is not null)
+        {
             var state = await AuthenticationState;
             _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null) {
+            if (_playerId is not null)
+            {
                 Player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
             }
         }

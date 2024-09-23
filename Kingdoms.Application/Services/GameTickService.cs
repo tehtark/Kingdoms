@@ -9,9 +9,11 @@ public class GameTickService(IServiceProvider serviceProvider)
 {
     private int _tick;
 
-    public int Tick {
+    public int Tick
+    {
         get => _tick;
-        private set {
+        private set
+        {
             _tick = value;
             OnTickUpdated?.Invoke();
         }
@@ -29,16 +31,19 @@ public class GameTickService(IServiceProvider serviceProvider)
 
     private async Task Start()
     {
-        while (true) {
+        while (true)
+        {
             Log.Debug("GameTickService: Tick!");
             Tick += 1;
-            using (var scope = _serviceProvider.CreateScope()) {
+            using (var scope = _serviceProvider.CreateScope())
+            {
                 var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
                 await mediator.Send(new UpdateBuildingsConstructionCommand());
                 await mediator.Send(new UpdateBuildingsProductionCommand());
             }
 
-            if (OnTickUpdated != null) {
+            if (OnTickUpdated != null)
+            {
                 await Task.WhenAll(OnTickUpdated.GetInvocationList().Cast<Func<Task>>().Select(del => del()));
             }
             await Task.Delay(TimeSpan.FromSeconds(_tickRate));

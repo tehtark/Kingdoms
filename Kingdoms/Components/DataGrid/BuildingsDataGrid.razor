@@ -1,0 +1,50 @@
+﻿@using Kingdoms.Application.Features.Building.Commands
+@using Kingdoms.Components.Dialog
+@using Kingdoms.Domain.Enums
+
+@inject ISender _mediator
+@inject IDialogService _dialogService
+
+<MudToolBar>
+    <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="ToggleBuildingConstructDialog" />
+    <MudIconButton Icon="@Icons.Material.Outlined.Remove" />
+</MudToolBar>
+<MudDataGrid T="Building" Dense Items="Buildings">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.HoldingId" Title="Holding ID" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Level" />
+        <PropertyColumn Property="x => x.ProductionRate" />
+        <PropertyColumn Property="x => x.IsConstructed" Title="Is Constructed?" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public ICollection<Building>? Buildings { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public Guid HoldingId { get; set; }
+
+    [Parameter]
+    public EventCallback OnBuildingConstructed { get; set; }
+
+    private async Task ToggleBuildingConstructDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = await _dialogService.ShowAsync<BuildingConstructionDialog>("BuildingConstructDialog", options);
+        var result = await dialog.Result;
+        if (result is null) return;
+        if (!result.Canceled)
+        {
+            if (result.Data is null) return;
+            BuildingType.TryParse(result.Data.ToString(), out BuildingType _selectedType);
+            await _mediator.Send(new CreateBuildingCommand(HoldingId, _selectedType));
+            await OnBuildingConstructed.InvokeAsync();
+        }
+    }
+
+}

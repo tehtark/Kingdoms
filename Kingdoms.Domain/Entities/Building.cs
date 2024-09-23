@@ -30,7 +30,8 @@ public class Building
         Name = Type.ToString();
         ConstructionStartTime = DateTime.Now;
 
-        switch (Type) {
+        switch (Type)
+        {
             case BuildingType.Lumberyard:
                 ProductionRate = 10 * Level;
                 break;
