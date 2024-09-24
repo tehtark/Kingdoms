@@ -18,12 +18,17 @@ public class Holding
 
     public Resources? Resources { get; set; }
 
-    public Holding(Guid id, string playerId, HoldingType type)
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+
+    public Holding(Guid id, string playerId, HoldingType type, double latitude, double longitude)
     {
         Id = id;
         PlayerId = playerId;
         Type = type;
         Buildings = new List<Building>();
         Resources = new Resources { Id = new(), HoldingId = id };
+        Latitude = latitude;
+        Longitude = longitude;
     }
 }

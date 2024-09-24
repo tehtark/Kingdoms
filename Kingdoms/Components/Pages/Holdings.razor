@@ -25,17 +25,20 @@
 @inject ISnackbar _snackbar
 @inject GameTickService gameTickService
 
-@if (_holdings is null) {
+@if (_holdings is null)
+{
     <Loading />
 }
-else {
+else
+{
     <MudGrid>
         <MudItem xs="12">
             <MudPaper Class="d-flex align-center pa-2">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateHolding">Create Holding</MudButton>
             </MudPaper>
         </MudItem>
-        @if (_holdings.Count > 0) {
+        @if (_holdings.Count > 0)
+        {
             <MudItem xs="12">
                 <MudCarousel SelectedIndexChanged="OnSelectedIndexChanged" ItemsSource="@_holdings" Style="height:50px;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
                     <ItemTemplate>
@@ -78,10 +81,12 @@ else {
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null) {
+        if (AuthenticationState is not null)
+        {
             var state = await AuthenticationState;
             _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null) {
+            if (_playerId is not null)
+            {
                 await RefreshData();
             }
         }
@@ -113,7 +118,7 @@ else {
     private async Task CreateHolding()
     {
         if (_playerId is null) return;
-        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle));
+        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle, 40, 2));
         await RefreshData();
     }
 

@@ -20,4 +20,12 @@
     <ProjectReference Include="..\Kingdoms.Domain\Kingdoms.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Map\toureia.geojson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties map_4toureia_1geojson__JsonSchema="https://cdn.jsdelivr.net/npm/tsup/schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

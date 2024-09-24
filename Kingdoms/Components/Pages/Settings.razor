@@ -10,16 +10,16 @@
 
 @if (Player is null)
 {
-    <Loading></Loading>
+        <Loading></Loading>
 }
 else
 {
 
-    <MudGrid>
-        <MudItem xs="12">
-            <MudField Label="Username" Variant="Variant.Text">@Player.Username</MudField>
-        </MudItem>
-    </MudGrid>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudField Label="Username" Variant="Variant.Text">@Player.Username</MudField>
+            </MudItem>
+        </MudGrid>
 }
 
 @code {

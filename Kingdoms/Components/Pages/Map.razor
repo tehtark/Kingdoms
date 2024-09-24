@@ -1,27 +1,78 @@
 ﻿@page "/map"
+@using Kingdoms.Application.Features.Holding.Queries
+@using Kingdoms.Application.Features.Map
+@using Kingdoms.Application.Services
+@using Newtonsoft.Json
 
-@if (string.IsNullOrEmpty(_jsonUrl))
+@inject ISender _mediator
+@inject ISnackbar _snackbar
+
+@if (!_loaded)
 {
     <Loading />
 }
 else
 {
-    <div style="height: calc(100vh - (var(--mud-appbar-height))); width: calc(100vw - var(--mud-drawer-width)); overflow: hidden;">
-        <SfMaps Width="100%" Height="100%">
-            <MapsLayers>
-                <MapsLayer ShapeData='new {dataOptions= _jsonUrl }' TValue="string">
-                </MapsLayer>
-            </MapsLayers>
-        </SfMaps>
-    </div>
+    <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(99vh - (var(--mud-appbar-height)))">
+        <MapsEvents OnMarkerClick="OnMarkerClick" ShapeSelected="OnShapeSelected" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" />
+        <MapsAreaSettings Background="#98c5f5" />
+        <MapsZoomSettings Enable="_canZoom" EnablePanning="_canPan" />
+        <MapsLayers>
+            <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
+                <MapsLayerSelectionSettings Enable="_canSelectLayer" Fill="green">
+                    <MapsLayerSelectionBorder Color="White" Width="2"></MapsLayerSelectionBorder>
+                </MapsLayerSelectionSettings>
+                <MapsShapeSettings ColorValuePath="Color" />
+                <MapsMarkerSettings>
+                    <MapsMarker Visible="true" DataSource="@_holdings" TValue="Holding" Height="25" Width="25" Shape="Syncfusion.Blazor.Maps.MarkerType.Balloon">
+                        <MapsMarkerSelectionSettings Fill="green" Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
+                    </MapsMarker>
+                </MapsMarkerSettings>
+                <MapsDataLabelSettings Visible="true" LabelPath="Full Name"></MapsDataLabelSettings>
+            </MapsLayer>
+        </MapsLayers>
+    </SfMaps>
 }
 
 @code {
-    private string? _jsonUrl;
+    private SfMaps? _sfMaps;
+    private string? _map;
+    private bool _loaded = false;
+    private List<Holding> _holdings = [];
+    private bool _canSelectMarker = true;
+    private bool _canSelectLayer = true;
+    private bool _canZoom = true;
+    private bool _canPan = true;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(Globals.DefaultDelay);
-        _jsonUrl = "https://raw.githubusercontent.com/martinjc/UK-GeoJSON/refs/heads/master/json/eurostat/ew/nuts1.json";
+
+        _map = "https://raw.githubusercontent.com/tehtark/Kingdoms/refs/heads/dev/Kingdoms/wwwroot/states.geojson";
+        _holdings = await _mediator.Send(new GetAllHoldingsQuery());
+        _loaded = true;
     }
+    private void OnMarkerClick(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
+    {
+        _snackbar.Add("Marker Clicked");
+    }
+
+    private void OnShapeSelected(Syncfusion.Blazor.Maps.ShapeSelectedEventArgs args)
+    {
+        _snackbar.Add("Shape Selected");
+
+    }
+    public void OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
+    {
+        _canSelectLayer = false;
+        _canSelectMarker = false;
+    }
+    public async void OnPanCompleteEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
+    {
+        await Task.Delay(500);
+
+        _canSelectLayer = true;
+        _canSelectMarker = true;
+    }
+
 }
