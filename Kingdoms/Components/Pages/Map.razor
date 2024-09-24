@@ -14,7 +14,7 @@
 else
 {
     <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(99vh - (var(--mud-appbar-height)))">
-        <MapsEvents OnMarkerClick="OnMarkerClick" ShapeSelected="OnShapeSelected" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" />
+        <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
         <MapsAreaSettings Background="#98c5f5" />
         <MapsZoomSettings Enable="_canZoom" EnablePanning="_canPan" />
         <MapsLayers>
@@ -24,7 +24,7 @@ else
                 </MapsLayerSelectionSettings>
                 <MapsShapeSettings ColorValuePath="Color" />
                 <MapsMarkerSettings>
-                    <MapsMarker Visible="true" DataSource="@_holdings" TValue="Holding" Height="25" Width="25" Shape="Syncfusion.Blazor.Maps.MarkerType.Balloon">
+                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="10" Width="10" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Circle">
                         <MapsMarkerSelectionSettings Fill="green" Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
                     </MapsMarker>
                 </MapsMarkerSettings>
@@ -40,9 +40,10 @@ else
     private bool _loaded = false;
     private List<Holding> _holdings = [];
     private bool _canSelectMarker = true;
-    private bool _canSelectLayer = true;
+    private bool _canSelectLayer = false;
     private bool _canZoom = true;
     private bool _canPan = true;
+    private bool _markersVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,27 +53,32 @@ else
         _holdings = await _mediator.Send(new GetAllHoldingsQuery());
         _loaded = true;
     }
-    private void OnMarkerClick(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
+    private void OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
     {
         _snackbar.Add("Marker Clicked");
     }
 
-    private void OnShapeSelected(Syncfusion.Blazor.Maps.ShapeSelectedEventArgs args)
-    {
-        _snackbar.Add("Shape Selected");
-
-    }
     public void OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
-        _canSelectLayer = false;
         _canSelectMarker = false;
     }
     public async void OnPanCompleteEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
         await Task.Delay(500);
 
-        _canSelectLayer = true;
         _canSelectMarker = true;
+    }
+
+    public void OnZoomCompleteEvent(Syncfusion.Blazor.Maps.MapZoomEventArgs args)
+    {
+        if(args.Scale < 3)
+        {
+            _markersVisible = false;
+        }
+        else
+        {
+            _markersVisible = true;
+        }
     }
 
 }

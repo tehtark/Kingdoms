@@ -25,6 +25,7 @@
 @inject NavigationManager _nav
 @inject ISender _mediator
 @inject ISnackbar _snackbar
+@inject HoldingConstructionService holdingConstructionService
 @inject GameTickService gameTickService
 
 @if (_holdings is null)
@@ -36,7 +37,7 @@ else
     <MudGrid>
         <MudItem xs="12">
             <MudPaper Class="d-flex align-center pa-2">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="CreateHolding">Create Holding</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ConstructHolding">Create Holding</MudButton>
             </MudPaper>
         </MudItem>
         @if (_holdings.Count > 0)
@@ -117,26 +118,10 @@ else
         await RefreshData();
     }
 
-    private async Task CreateHolding()
+    private async Task ConstructHolding()
     {
-        if (_playerId is null) return;
-
-        var features = await _mediator.Send(new DeserialiseGeoJsonCommand());
-
-        var feature = features[1];
-
-        var boundingBox = feature.Geometry.EnvelopeInternal;
-
-        var random = new Random();
-        NetTopologySuite.Geometries.Coordinate coordinate;
-        do
-        {
-            var latitude = random.NextDouble() * (boundingBox.MaxY - boundingBox.MinY) + boundingBox.MinY;
-            var longitude = random.NextDouble() * (boundingBox.MaxX - boundingBox.MinX) + boundingBox.MinX;
-            coordinate = new NetTopologySuite.Geometries.Coordinate(longitude, latitude);
-        } while (!((Polygon)feature.Geometry).Contains(new Point(coordinate)));
-
-        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle, coordinate.X, coordinate.Y));
+        if (_playerId == null) return;
+        await holdingConstructionService.Construct(_playerId, HoldingType.Village);
         await RefreshData();
     }
 

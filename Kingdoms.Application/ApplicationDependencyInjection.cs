@@ -14,6 +14,12 @@ public static class ApplicationDependencyInjection
             config.RegisterServicesFromAssembly(typeof(ApplicationDependencyInjection).Assembly);
         });
 
+        AddServices(services);
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<HoldingConstructionService>();
         services.AddSingleton<GameTickService>();
         services.AddHostedService<GameService>();
     }
