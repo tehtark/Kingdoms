@@ -20,4 +20,9 @@
     <ItemGroup>
         <ProjectReference Include="..\Kingdoms.Application\Kingdoms.Application.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Content Update="wwwroot\maps\toureia.geojson">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>
