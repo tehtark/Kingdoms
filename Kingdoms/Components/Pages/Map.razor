@@ -48,7 +48,7 @@ else
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        _map = "https://raw.githubusercontent.com/tehtark/Kingdoms/refs/heads/dev/Kingdoms/wwwroot/states.geojson";
+        _map = "https://raw.githubusercontent.com/tehtark/Kingdoms/refs/heads/dev/Kingdoms.Infrastructure/Map/toureia.geojson";
         _holdings = await _mediator.Send(new GetAllHoldingsQuery());
         _loaded = true;
     }
