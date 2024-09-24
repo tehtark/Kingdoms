@@ -11,11 +11,7 @@ public class DatabaseContext : DbContext
     public DbSet<Building> Buildings { get; set; }
     public DbSet<Resources> Resources { get; set; }
 
-    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Kingdoms;";
-
-    public DatabaseContext()
-    {
-    }
+    private readonly string _connectionString = "Data Source=192.168.0.35;User ID=sa;Password=-4hF4MntMgGgi!@XrWxt;Initial Catalog=Kingdoms;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
     private void OnSavingChanges(object? sender, SavingChangesEventArgs e)
     {
