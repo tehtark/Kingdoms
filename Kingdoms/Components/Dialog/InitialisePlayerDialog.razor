@@ -1,0 +1,27 @@
+﻿<MudDialog>
+    <TitleContent>
+        Give yourself a name.
+    </TitleContent>
+    <DialogContent>
+        <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudTextField FullWidth="true" @bind-Value=_username T="string" Label="Please enter your Username" Required="true" RequiredError="User name is required!" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@(!success)" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private string? _username;
+    bool success;
+    string[] errors = { };
+
+    private void Submit() => MudDialog.Close(_username);
+
+    private void Cancel() => MudDialog.Cancel();
+}

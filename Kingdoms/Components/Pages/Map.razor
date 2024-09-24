@@ -24,8 +24,9 @@ else
                 </MapsLayerSelectionSettings>
                 <MapsShapeSettings ColorValuePath="Color" />
                 <MapsMarkerSettings>
-                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="10" Width="10" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Circle">
+                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Globals.VillageIcon.Url">
                         <MapsMarkerSelectionSettings Fill="green" Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
+                        <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
                     </MapsMarker>
                 </MapsMarkerSettings>
                 <MapsDataLabelSettings Visible="true" LabelPath="Full Name"></MapsDataLabelSettings>
@@ -43,6 +44,7 @@ else
     private bool _canSelectLayer = false;
     private bool _canZoom = true;
     private bool _canPan = true;
+    private bool _tooltipsVisible = true;
     private bool _markersVisible = false;
 
     protected override async Task OnInitializedAsync()
@@ -55,12 +57,13 @@ else
     }
     private void OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
     {
-        _snackbar.Add("Marker Clicked");
+        _snackbar.Add($"Marker Clicked");
     }
 
     public void OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
         _canSelectMarker = false;
+
     }
     public async void OnPanCompleteEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
@@ -71,7 +74,7 @@ else
 
     public void OnZoomCompleteEvent(Syncfusion.Blazor.Maps.MapZoomEventArgs args)
     {
-        if(args.Scale < 3)
+        if (args.Scale < 3)
         {
             _markersVisible = false;
         }
