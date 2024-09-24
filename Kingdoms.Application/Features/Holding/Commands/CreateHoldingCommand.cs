@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Kingdoms.Application.Features.Holding.Commands;
 
-public record CreateHoldingCommand(string PlayerId, HoldingType HoldingType, double Latitude, double Longitude) : IRequest<Domain.Entities.Holding?>;
+public record CreateHoldingCommand(string PlayerId, HoldingType HoldingType, double Longitude, double Latitude) : IRequest<Domain.Entities.Holding?>;
 
 internal class CreateHoldingCommandHandler : IRequestHandler<CreateHoldingCommand, Domain.Entities.Holding?>
 {
@@ -12,7 +12,7 @@ internal class CreateHoldingCommandHandler : IRequestHandler<CreateHoldingComman
     {
         using var databaseContext = new DatabaseContext();
 
-        var holding = new Domain.Entities.Holding(new(), request.PlayerId, request.HoldingType, request.Latitude, request.Longitude);
+        var holding = new Domain.Entities.Holding(new(), request.PlayerId, request.HoldingType, request.Longitude, request.Latitude);
         await databaseContext.Holdings.AddAsync(holding);
         await databaseContext.SaveChangesAsync();
         return holding;

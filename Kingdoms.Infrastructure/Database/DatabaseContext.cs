@@ -11,7 +11,7 @@ public class DatabaseContext : DbContext
     public DbSet<Building> Buildings { get; set; }
     public DbSet<Resources> Resources { get; set; }
 
-    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Kingdoms;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"; // Environment.GetEnvironmentVariable("SQL_CONNTECTION_STRING");
+    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Kingdoms;";
 
     public DatabaseContext()
     {

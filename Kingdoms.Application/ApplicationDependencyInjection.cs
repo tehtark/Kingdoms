@@ -8,12 +8,11 @@ public static class ApplicationDependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
+        services.AddInfrastructure();
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(ApplicationDependencyInjection).Assembly);
         });
-
-        services.AddInfrastructure();
 
         services.AddSingleton<GameTickService>();
         services.AddHostedService<GameService>();

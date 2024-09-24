@@ -2,6 +2,7 @@
 
 @using Kingdoms.Application.Features.Holding.Commands
 @using Kingdoms.Application.Features.Holding.Queries
+@using Kingdoms.Application.Features.Map
 @using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Application.Features.Building.Commands
 @using Kingdoms.Application.Features.Building.Queries
@@ -15,6 +16,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
+@using NetTopologySuite.Geometries
 
 @implements IAsyncDisposable
 @attribute [Authorize]
@@ -118,7 +120,23 @@ else
     private async Task CreateHolding()
     {
         if (_playerId is null) return;
-        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle, 40, 2));
+
+        var features = await _mediator.Send(new DeserialiseGeoJsonCommand());
+
+        var feature = features[1];
+
+        var boundingBox = feature.Geometry.EnvelopeInternal;
+
+        var random = new Random();
+        NetTopologySuite.Geometries.Coordinate coordinate;
+        do
+        {
+            var latitude = random.NextDouble() * (boundingBox.MaxY - boundingBox.MinY) + boundingBox.MinY;
+            var longitude = random.NextDouble() * (boundingBox.MaxX - boundingBox.MinX) + boundingBox.MinX;
+            coordinate = new NetTopologySuite.Geometries.Coordinate(longitude, latitude);
+        } while (!((Polygon)feature.Geometry).Contains(new Point(coordinate)));
+
+        await _mediator.Send(new CreateHoldingCommand(_playerId, HoldingType.Castle, coordinate.X, coordinate.Y));
         await RefreshData();
     }
 
