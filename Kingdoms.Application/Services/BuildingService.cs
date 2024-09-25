@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Kingdoms.Application.Services;
 
-public class BuildingConstructionService(IMediator mediator)
+public class BuildingService(IMediator mediator)
 {
     public async Task Construct(Guid holdingId, BuildingType type)
     {

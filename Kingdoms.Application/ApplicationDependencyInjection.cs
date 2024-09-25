@@ -19,7 +19,8 @@ public static class ApplicationDependencyInjection
 
     private static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<HoldingConstructionService>();
+        services.AddScoped<HoldingService>();
+        services.AddScoped<BuildingService>();
         services.AddSingleton<GameTickService>();
         services.AddHostedService<GameService>();
     }

@@ -1,5 +1,6 @@
 ﻿using Kingdoms.Application.Features.Database.Commands;
 using Kingdoms.Application.Features.Holding.Commands;
+using Kingdoms.Application.Features.Holding.Queries;
 using Kingdoms.Application.Features.Map;
 using Kingdoms.Domain.Entities;
 using Kingdoms.Domain.Enums;
@@ -9,7 +10,7 @@ using NetTopologySuite.Geometries;
 
 namespace Kingdoms.Application.Services;
 
-public class HoldingConstructionService(IMediator mediator)
+public class HoldingService(IMediator mediator)
 {
     public async Task Construct(string playerId, HoldingType holdingType)
     {
@@ -30,6 +31,11 @@ public class HoldingConstructionService(IMediator mediator)
 
         Holding holding = await mediator.Send(new ConstructHoldingCommand(playerId, holdingType, coordinate.X, coordinate.Y));
         await mediator.Send(new SaveHoldingCommand(holding));
+    }
+
+    public async Task<List<Holding>> GetPlayerHoldings(string playerId)
+    {
+        return await mediator.Send(new GetPlayerHoldingsQuery(playerId));
     }
 
     private async Task<FeatureCollection?> GetFeatures()

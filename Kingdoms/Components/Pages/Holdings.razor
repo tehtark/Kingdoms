@@ -25,8 +25,8 @@
 @inject NavigationManager _nav
 @inject ISender _mediator
 @inject ISnackbar _snackbar
-@inject HoldingConstructionService holdingConstructionService
-@inject GameTickService gameTickService
+@inject GameTickService _gameTickService
+@inject HoldingService _holdingService
 
 @if (_holdings is null)
 {
@@ -116,14 +116,14 @@ else
             }
         }
 
-        gameTickService.OnTickUpdated += OnTickUpdated;
+        _gameTickService.OnTickUpdated += OnTickUpdated;
 
         await base.OnInitializedAsync();
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
     {
-        gameTickService.OnTickUpdated -= OnTickUpdated;
+        _gameTickService.OnTickUpdated -= OnTickUpdated;
         _holdings = null;
         _playerId = null;
         return ValueTask.CompletedTask;
@@ -143,14 +143,14 @@ else
     private async Task ConstructHolding()
     {
         if (_playerId == null) return;
-        await holdingConstructionService.Construct(_playerId, HoldingType.Village);
+        await _holdingService.Construct(_playerId, HoldingType.Village);
         await RefreshData();
     }
 
     private async Task RefreshData()
     {
         if (_playerId is null) return;
-        _holdings = await _mediator.Send(new GetHoldingsByPlayerIdQuery(_playerId));
+        _holdings = await _holdingService.GetPlayerHoldings(_playerId);
 
         await InvokeAsync(StateHasChanged);
     }

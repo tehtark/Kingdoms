@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Kingdoms.Application.Features.Holding.Queries;
 
-public record GetHoldingsByPlayerIdQuery(string PlayerId) : IRequest<List<Domain.Entities.Holding>>;
+public record GetPlayerHoldingsQuery(string PlayerId) : IRequest<List<Domain.Entities.Holding>>;
 
-internal class GetHoldingsByPlayerIdQueryHandler : IRequestHandler<GetHoldingsByPlayerIdQuery, List<Domain.Entities.Holding>>
+internal class GetPlayerHoldingsQueryHandler : IRequestHandler<GetPlayerHoldingsQuery, List<Domain.Entities.Holding>>
 {
-    public async Task<List<Domain.Entities.Holding>> Handle(GetHoldingsByPlayerIdQuery request, CancellationToken cancellationToken)
+    public async Task<List<Domain.Entities.Holding>> Handle(GetPlayerHoldingsQuery request, CancellationToken cancellationToken)
     {
         using var databaseContext = new DatabaseContext();
 
