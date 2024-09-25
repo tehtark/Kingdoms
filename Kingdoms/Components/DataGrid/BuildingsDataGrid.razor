@@ -1,9 +1,11 @@
 ﻿@using Kingdoms.Application.Features.Building.Commands
+@using Kingdoms.Application.Services
 @using Kingdoms.Components.Dialog
 @using Kingdoms.Domain.Enums
 
 @inject ISender _mediator
 @inject IDialogService _dialogService
+@inject BuildingConstructionService _buildingConstructionService
 
 <MudToolBar>
     <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="ToggleBuildingConstructDialog" />
@@ -40,7 +42,8 @@
         {
             if (result.Data is null) return;
             BuildingType.TryParse(result.Data.ToString(), out BuildingType _selectedType);
-            await _mediator.Send(new CreateBuildingCommand(HoldingId, _selectedType));
+
+            await _buildingConstructionService.Construct(HoldingId, _selectedType);
             await OnBuildingConstructed.InvokeAsync();
         }
     }
