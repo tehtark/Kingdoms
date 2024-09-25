@@ -1,4 +1,4 @@
-﻿using Kingdoms.Application.Features.Map;
+﻿using Kingdoms.Application.Features.Map.Commands;
 using Kingdoms.Application.Features.Map.Queries;
 using MediatR;
 using NetTopologySuite.Features;
