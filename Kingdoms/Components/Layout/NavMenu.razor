@@ -4,7 +4,10 @@
             <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
             <MudNavLink Href="/map" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Map">Map</MudNavLink>
             <MudNavLink Href="/holdings" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.HolidayVillage">Holdings</MudNavLink>
-            <MudNavLink Href="/settings" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+            <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+                <MudNavLink Href="/settings" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SettingsSuggest">Main</MudNavLink>
+                <MudNavLink Href="/admin" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AdminPanelSettings">Admin</MudNavLink>
+            </MudNavGroup>
         </Authorized>
         <NotAuthorized>
             <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>

@@ -1,7 +1,7 @@
 ﻿using Kingdoms.Application.Features.Database.Commands;
 using Kingdoms.Application.Features.Holding.Commands;
 using Kingdoms.Application.Features.Holding.Queries;
-using Kingdoms.Application.Features.Map;
+using Kingdoms.Application.Features.Map.Queries;
 using Kingdoms.Domain.Entities;
 using Kingdoms.Domain.Enums;
 using MediatR;
@@ -12,12 +12,12 @@ namespace Kingdoms.Application.Services;
 
 public class HoldingService(IMediator mediator)
 {
-    public async Task Construct(string playerId, HoldingType holdingType)
+    public async Task Construct(string playerId, HoldingType holdingType, string state)
     {
-        FeatureCollection? features = await GetFeatures();
+        FeatureCollection? features = await mediator.Send(new GetMapFeaturesQuery());
         if (features == null) return;
-
-        IFeature feature = features[1];
+        IFeature? feature = await mediator.Send(new GetMapFeatureFromStateQuery(features, state));
+        if (feature == null) return;
         Envelope boundingBox = feature.Geometry.EnvelopeInternal;
 
         Random random = new();
@@ -36,10 +36,5 @@ public class HoldingService(IMediator mediator)
     public async Task<List<Holding>> GetPlayerHoldings(string playerId)
     {
         return await mediator.Send(new GetPlayerHoldingsQuery(playerId));
-    }
-
-    private async Task<FeatureCollection?> GetFeatures()
-    {
-        return await mediator.Send(new DeserialiseGeoJsonCommand());
     }
 }

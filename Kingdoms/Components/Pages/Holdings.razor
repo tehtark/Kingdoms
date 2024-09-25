@@ -27,6 +27,7 @@
 @inject ISnackbar _snackbar
 @inject GameTickService _gameTickService
 @inject HoldingService _holdingService
+@inject MapService _mapService
 
 @if (_holdings is null)
 {
@@ -88,6 +89,12 @@ else
             <MudItem xs="12">
                 <MudPaper Class="d-flex align-center pa-2">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ConstructHolding">Create Holding</MudButton>
+                    <MudSelect @bind-Value="_selectedState" Label="Select Country.">
+                        @foreach (string state in _states)
+                        {
+                            <MudSelectItem Value="@state">@state</MudSelectItem>
+                        }
+                    </MudSelect>
                 </MudPaper>
             </MudItem>
         </MudGrid>
@@ -98,9 +105,10 @@ else
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
     private string? _playerId;
-
     private List<Holding>? _holdings = null;
     private int _selectedIndex;
+    private string _selectedState;
+    private List<string> _states = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,7 +123,6 @@ else
                 await RefreshData();
             }
         }
-
         _gameTickService.OnTickUpdated += OnTickUpdated;
 
         await base.OnInitializedAsync();
@@ -143,7 +150,7 @@ else
     private async Task ConstructHolding()
     {
         if (_playerId == null) return;
-        await _holdingService.Construct(_playerId, HoldingType.Village);
+        await _holdingService.Construct(_playerId, HoldingType.Village, _selectedState);
         await RefreshData();
     }
 
@@ -151,7 +158,7 @@ else
     {
         if (_playerId is null) return;
         _holdings = await _holdingService.GetPlayerHoldings(_playerId);
-
+        _states = await _mapService.GetStates();
         await InvokeAsync(StateHasChanged);
     }
 }

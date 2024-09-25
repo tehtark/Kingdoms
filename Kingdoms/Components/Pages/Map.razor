@@ -29,7 +29,7 @@ else
                         <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
                     </MapsMarker>
                 </MapsMarkerSettings>
-                <MapsDataLabelSettings Visible="true" LabelPath="Full Name"></MapsDataLabelSettings>
+                <MapsDataLabelSettings Visible="true" LabelPath="State"></MapsDataLabelSettings>
             </MapsLayer>
         </MapsLayers>
     </SfMaps>
@@ -74,7 +74,7 @@ else
 
     public void OnZoomCompleteEvent(Syncfusion.Blazor.Maps.MapZoomEventArgs args)
     {
-        if (args.Scale < 3)
+        if (args.Scale < 2)
         {
             _markersVisible = false;
         }

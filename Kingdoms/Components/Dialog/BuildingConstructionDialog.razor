@@ -6,11 +6,11 @@
     <DialogContent>
         <MudGrid Spacing="1">
             <MudItem xs="12">
-                <MudSelect @bind-Value="_selectedType" Label="Select building.">
+                <MudSelect @bind-Value="_selectedType" Label="Select Building.">
                     @foreach (BuildingType item in Enum.GetValues(typeof(BuildingType)))
                     {
 
-                            <MudSelectItem Value="@item">@item</MudSelectItem>
+                        <MudSelectItem Value="@item">@item</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
