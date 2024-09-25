@@ -10,8 +10,7 @@ internal class GetPlayerHoldingsQueryHandler : IRequestHandler<GetPlayerHoldings
 {
     public async Task<List<Domain.Entities.Holding>> Handle(GetPlayerHoldingsQuery request, CancellationToken cancellationToken)
     {
-        using var databaseContext = new DatabaseContext();
-
+        using DatabaseContext databaseContext = new();
         return await databaseContext.Holdings
             .Where(h => h.PlayerId == request.PlayerId)
             .Include(b => b.Buildings)

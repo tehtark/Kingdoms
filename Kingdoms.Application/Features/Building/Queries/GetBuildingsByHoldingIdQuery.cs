@@ -11,7 +11,6 @@ internal class GetBuildingsByHoldingIdQueryHandler : IRequestHandler<GetBuilding
     public async Task<List<Domain.Entities.Building>> Handle(GetBuildingsByHoldingIdQuery request, CancellationToken cancellationToken)
     {
         using var databaseContext = new DatabaseContext();
-
         return await databaseContext.Buildings
             .Where(h => h.HoldingId == request.HoldingId)
             .ToListAsync();
