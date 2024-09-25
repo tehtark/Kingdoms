@@ -24,7 +24,7 @@ else
                 </MapsLayerSelectionSettings>
                 <MapsShapeSettings ColorValuePath="Color" />
                 <MapsMarkerSettings>
-                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Globals.VillageIcon.Url">
+                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Village">
                         <MapsMarkerSelectionSettings Fill="green" Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
                         <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
                     </MapsMarker>

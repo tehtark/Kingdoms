@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kingdoms", "Kingdoms\Kingdoms.csproj", "{B73C52F0-1536-4D60-8EC3-26C335738738}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kingdoms.Presentation", "Kingdoms.Presentation\Kingdoms.Presentation.csproj", "{455CD96A-7765-4AF6-94D2-C469E60E9C8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B73C52F0-1536-4D60-8EC3-26C335738738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B73C52F0-1536-4D60-8EC3-26C335738738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B73C52F0-1536-4D60-8EC3-26C335738738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{455CD96A-7765-4AF6-94D2-C469E60E9C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455CD96A-7765-4AF6-94D2-C469E60E9C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{455CD96A-7765-4AF6-94D2-C469E60E9C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455CD96A-7765-4AF6-94D2-C469E60E9C8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
