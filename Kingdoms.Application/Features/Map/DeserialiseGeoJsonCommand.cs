@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Kingdoms.Domain;
+using MediatR;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO;
 
@@ -10,7 +11,7 @@ internal class DeserialiseGeoJsonCommandHandler(HttpClient httpClient) : IReques
 {
     public async Task<FeatureCollection?> Handle(DeserialiseGeoJsonCommand request, CancellationToken cancellationToken)
     {
-        var json = await httpClient.GetStringAsync("https://raw.githubusercontent.com/tehtark/Kingdoms/refs/heads/dev/Kingdoms.Infrastructure/Map/toureia.geojson");
+        var json = await httpClient.GetStringAsync(Globals.Map);
         var reader = new GeoJsonReader();
         return reader.Read<FeatureCollection>(json);
     }
