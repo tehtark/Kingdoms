@@ -3,7 +3,7 @@ using MediatR;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO;
 
-namespace Kingdoms.Application.Features.Map;
+namespace Kingdoms.Application.Features.Map.Commands;
 
 public class DeserialiseGeoJsonCommand : IRequest<FeatureCollection>;
 
