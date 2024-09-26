@@ -1,5 +1,4 @@
 ﻿using Kingdoms.Application.Features.Building.Commands;
-using Kingdoms.Application.Features.Database.Commands;
 using Kingdoms.Domain.Entities;
 using Kingdoms.Domain.Enums;
 using MediatR;
@@ -10,8 +9,7 @@ public class BuildingService(IMediator mediator)
 {
     public async Task Construct(Guid holdingId, BuildingType type)
     {
-        Building building = await mediator.Send(new ConstructBuildingCommand(holdingId, type));
-        await mediator.Send(new SaveBuildingCommand(building));
+        await mediator.Send(new ConstructBuildingCommand(holdingId, type));
     }
 
     public async Task Demolish(Building building)

@@ -1,5 +1,4 @@
-﻿using Kingdoms.Application.Features.Database.Commands;
-using Kingdoms.Application.Features.Holding.Commands;
+﻿using Kingdoms.Application.Features.Holding.Commands;
 using Kingdoms.Application.Features.Holding.Queries;
 using Kingdoms.Application.Features.Map.Queries;
 using Kingdoms.Domain.Entities;
@@ -29,8 +28,7 @@ public class HoldingService(IMediator mediator)
             coordinate = new Coordinate(longitude, latitude);
         } while (!((Polygon)feature.Geometry).Contains(new Point(coordinate)));
 
-        Holding holding = await mediator.Send(new ConstructHoldingCommand(playerId, holdingType, coordinate.X, coordinate.Y));
-        await mediator.Send(new SaveHoldingCommand(holding));
+        await mediator.Send(new ConstructHoldingCommand(playerId, holdingType, coordinate.X, coordinate.Y));
     }
 
     public async Task<List<Holding>> GetPlayerHoldings(string playerId)

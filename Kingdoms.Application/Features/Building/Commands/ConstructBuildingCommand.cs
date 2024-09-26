@@ -1,14 +1,19 @@
 ﻿using Kingdoms.Domain.Enums;
+using Kingdoms.Infrastructure.Database;
 using MediatR;
 
 namespace Kingdoms.Application.Features.Building.Commands;
 
-public record ConstructBuildingCommand(Guid HoldingId, BuildingType Type) : IRequest<Domain.Entities.Building>;
+public record ConstructBuildingCommand(Guid HoldingId, BuildingType Type) : IRequest;
 
-internal class ConstructBuildingCommandHandler : IRequestHandler<ConstructBuildingCommand, Domain.Entities.Building>
+internal class ConstructBuildingCommandHandler : IRequestHandler<ConstructBuildingCommand>
 {
-    public Task<Domain.Entities.Building> Handle(ConstructBuildingCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ConstructBuildingCommand request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(new Domain.Entities.Building(new Guid(), request.HoldingId, request.Type));
+        Domain.Entities.Building building = new Domain.Entities.Building(new(), request.HoldingId, request.Type);
+
+        using DatabaseContext databaseContext = new();
+        databaseContext.Buildings.Add(building);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 }
