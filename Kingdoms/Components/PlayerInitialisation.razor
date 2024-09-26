@@ -1,0 +1,60 @@
+﻿@using Kingdoms.Application.Features.Player.Commands
+@using Kingdoms.Application.Services
+@inject MapService _mapService
+@inject HoldingService _holdingService
+@inject NavigationManager _nav
+@inject ISender _mediator
+
+@if (_states is not null)
+{
+    <MudContainer>
+        <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
+            <div>
+                <MudTextField FullWidth="true" @bind-Value=_username T="string" Label="Please enter your Username" Required="true" RequiredError="Required!" />
+            </div>
+            <div>
+                <MudSelect @bind-Value="_selectedState" Required="true" RequiredError="Required!" Label="Select Country.">
+                    @foreach (string state in _states)
+                    {
+                        <MudSelectItem Value="@state">@state</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+            <div class="pa-4">
+                <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Ok</MudButton>
+            </div>
+        </MudForm>
+    </MudContainer>
+
+}
+else
+{
+    <Loading />
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string? PlayerId { get; set; }
+
+    private List<string> _states;
+
+    private string _username;
+    private string _selectedState;
+    bool success;
+    string[] errors = { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _states = await _mapService.GetStates();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnSubmit()
+    {
+        await _mediator.Send(new CreatePlayerCommand(PlayerId, _username));
+        await _holdingService.Construct(PlayerId, HoldingType.Village, _selectedState);
+        _nav.Refresh(true);
+
+    }
+}

@@ -10,7 +10,9 @@
 @inject ISender _mediator
 @inject NavigationManager _nav
 @inject ISnackbar _snackbar
-@inject GameTickService gameTickServices
+@inject GameTickService _gameTickServices
+@inject HoldingService _holdingService
+@inject MapService _mapService
 
 @if (!_isLoaded)
 {
@@ -26,6 +28,15 @@ else
     }
 
     <MudButton OnClick="ResetDatabase">Reset Database</MudButton>
+    <MudPaper Class="d-flex align-center pa-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ConstructHolding">Create Holding</MudButton>
+        <MudSelect @bind-Value="_selectedState" Label="Select Country.">
+            @foreach (string state in _states)
+            {
+                <MudSelectItem Value="@state">@state</MudSelectItem>
+            }
+        </MudSelect>
+    </MudPaper>
 }
 
 @code {
@@ -35,6 +46,8 @@ else
 
     private bool _isLoaded = false;
     private int? _tick = null;
+    private string _selectedState;
+    private List<string> _states = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,17 +63,19 @@ else
                 {
                     _nav.NavigateTo("/", true);
                 }
+                _states = await _mapService.GetStates();
+
             }
         }
 
         _tick = await _mediator.Send(new GetTickQuery());
-        gameTickServices.OnTickUpdated += GameTickServices_OnTickUpdated;
+        _gameTickServices.OnTickUpdated += GameTickServices_OnTickUpdated;
         _isLoaded = true;
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
     {
-        gameTickServices.OnTickUpdated -= GameTickServices_OnTickUpdated;
+        _gameTickServices.OnTickUpdated -= GameTickServices_OnTickUpdated;
         return ValueTask.CompletedTask;
     }
 
@@ -74,6 +89,11 @@ else
         await _mediator.Send(new ResetDatabaseCommand());
         _snackbar.Add("Database reset!");
         await InvokeAsync(StateHasChanged);
+    }
+    private async Task ConstructHolding()
+    {
+        if (_playerId == null) return;
+        await _holdingService.Construct(_playerId, HoldingType.Village, _selectedState);
     }
 
 }

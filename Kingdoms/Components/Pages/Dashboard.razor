@@ -8,7 +8,7 @@
 @inject NavigationManager _nav
 @inject IDialogService _dialogService
 
-@if (isLoaded)
+@if (_loaded)
 {
     if (_player is not null)
     {
@@ -16,8 +16,7 @@
     }
     else
     {
-
-        @CreatePlayer()
+        <PlayerInitialisation PlayerId="@_playerId" />
     }
 }
 else
@@ -28,7 +27,7 @@ else
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
-    private bool isLoaded;
+    private bool _loaded;
 
     private Player? _player;
     private string? _playerId;
@@ -46,28 +45,7 @@ else
             {
                 _player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
             }
-            isLoaded = true;
+            _loaded = true;
         }
-    }
-
-    private async Task CreatePlayer()
-    {
-        var dialog = await _dialogService.ShowAsync<PlayerNameChangeDialog>(
-            "PlayerNameChangeDialog",
-            new DialogOptions
-                {
-                    CloseOnEscapeKey = true,
-                    MaxWidth = MaxWidth.Medium
-                });
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled && result.Data is not null)
-        {
-            var username = result.Data.ToString();
-            await _mediator.Send(new CreatePlayerCommand(_playerId, username));
-        }
-
-        _nav.Refresh(true); // Refresh regardless of whether the player was created or not
     }
 }

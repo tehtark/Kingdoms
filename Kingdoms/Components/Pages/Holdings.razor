@@ -35,70 +35,56 @@
 }
 else
 {
-    <MudContainer MaxWidth="MaxWidth.Large" Style="padding:inherit">
-
-        <MudGrid>
-            @if (_holdings.Count > 0)
-            {
-                <MudItem xs="12">
-                    <MudCarousel SelectedIndexChanged="OnSelectedIndexChanged" ItemsSource="@_holdings" Style="height:50px;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
-                        <ItemTemplate>
-                            <MudPaper Class="d-flex justify-center align-center" Style="height:50px">
-                                <MudText>@_holdings[_selectedIndex].Id</MudText>
-                            </MudPaper>
-                        </ItemTemplate>
-                    </MudCarousel>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudPaper>
-                        <MudExpansionPanels MultiExpansion="true">
-                            <MudExpansionPanel Expanded="true" Text="Information">
-                                <HoldingInformation Holding="_holdings[_selectedIndex]" />
-                            </MudExpansionPanel>
-                            <MudExpansionPanel Expanded="true" Text="Resources">
-                                <MudStack Spacing="2" Row="true">
-                                    <div style="justify-content:center; align-content:center">
-                                        <MudTooltip Text="Wood">
-                                            <MudIconButton Icon="@Presentation.Shared.Icons.Wood" />
-                                        </MudTooltip>
-                                        @_holdings[_selectedIndex].Resources?.Wood
-                                    </div>
-
-                                    <div style="justify-content:center; align-content:center">
-                                        <MudTooltip Text="Stone">
-                                            <MudIconButton Icon="@Presentation.Shared.Icons.Stone" />
-                                        </MudTooltip>
-                                        @_holdings[_selectedIndex].Resources?.Stone
-                                    </div>
-
-                                    <div style="justify-content:center; align-content:center">
-                                        <MudTooltip Text="Iron">
-                                            <MudIconButton Icon="@Presentation.Shared.Icons.Iron" />
-                                        </MudTooltip>
-                                        @_holdings[_selectedIndex].Resources?.Iron
-                                    </div>
-                                </MudStack>
-                            </MudExpansionPanel>
-                            <MudExpansionPanel Expanded="true" Text="Buildings">
-                                <BuildingsDataGrid Buildings="_holdings[_selectedIndex].Buildings" HoldingId="_holdings[_selectedIndex].Id" OnBuildingConstructed="RefreshData" />
-                            </MudExpansionPanel>
-                        </MudExpansionPanels>
-                    </MudPaper>
-                </MudItem>
-            }
+    <MudGrid>
+        @if (_holdings.Count > 0)
+        {
             <MudItem xs="12">
-                <MudPaper Class="d-flex align-center pa-2">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ConstructHolding">Create Holding</MudButton>
-                    <MudSelect @bind-Value="_selectedState" Label="Select Country.">
-                        @foreach (string state in _states)
-                        {
-                            <MudSelectItem Value="@state">@state</MudSelectItem>
-                        }
-                    </MudSelect>
+                <MudCarousel SelectedIndexChanged="OnSelectedIndexChanged" ItemsSource="@_holdings" Style="height:50px;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
+                    <ItemTemplate>
+                        <MudPaper Class="d-flex justify-center align-center" Style="height:50px">
+                            <MudText>@_holdings[_selectedIndex].Id</MudText>
+                        </MudPaper>
+                    </ItemTemplate>
+                </MudCarousel>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper>
+                    <MudExpansionPanels MultiExpansion="true">
+                        <MudExpansionPanel Expanded="true" Text="Information">
+                            <HoldingInformation Holding="_holdings[_selectedIndex]" />
+                        </MudExpansionPanel>
+                        <MudExpansionPanel Expanded="true" Text="Resources">
+                            <MudStack Spacing="2" Row="true">
+                                <div style="justify-content:center; align-content:center">
+                                    <MudTooltip Text="Wood">
+                                        <MudIconButton Icon="@Presentation.Shared.Icons.Wood" />
+                                    </MudTooltip>
+                                    @_holdings[_selectedIndex].Resources?.Wood
+                                </div>
+
+                                <div style="justify-content:center; align-content:center">
+                                    <MudTooltip Text="Stone">
+                                        <MudIconButton Icon="@Presentation.Shared.Icons.Stone" />
+                                    </MudTooltip>
+                                    @_holdings[_selectedIndex].Resources?.Stone
+                                </div>
+
+                                <div style="justify-content:center; align-content:center">
+                                    <MudTooltip Text="Iron">
+                                        <MudIconButton Icon="@Presentation.Shared.Icons.Iron" />
+                                    </MudTooltip>
+                                    @_holdings[_selectedIndex].Resources?.Iron
+                                </div>
+                            </MudStack>
+                        </MudExpansionPanel>
+                        <MudExpansionPanel Expanded="true" Text="Buildings">
+                            <BuildingsDataGrid Buildings="_holdings[_selectedIndex].Buildings" HoldingId="_holdings[_selectedIndex].Id" OnBuildingConstructed="RefreshData" />
+                        </MudExpansionPanel>
+                    </MudExpansionPanels>
                 </MudPaper>
             </MudItem>
-        </MudGrid>
-    </MudContainer>
+        }
+    </MudGrid>
 }
 
 @code {
@@ -107,8 +93,6 @@ else
     private string? _playerId;
     private List<Holding>? _holdings = null;
     private int _selectedIndex;
-    private string _selectedState;
-    private List<string> _states = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -147,18 +131,10 @@ else
         await RefreshData();
     }
 
-    private async Task ConstructHolding()
-    {
-        if (_playerId == null) return;
-        await _holdingService.Construct(_playerId, HoldingType.Village, _selectedState);
-        await RefreshData();
-    }
-
     private async Task RefreshData()
     {
         if (_playerId is null) return;
         _holdings = await _holdingService.GetPlayerHoldings(_playerId);
-        _states = await _mapService.GetStates();
         await InvokeAsync(StateHasChanged);
     }
 }
