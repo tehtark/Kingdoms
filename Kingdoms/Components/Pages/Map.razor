@@ -2,6 +2,7 @@
 @using Kingdoms.Application.Features.Holding.Queries
 @using Kingdoms.Application.Features.Map
 @using Kingdoms.Application.Services
+@using Kingdoms.Components.Carousel
 @using Newtonsoft.Json
 
 @inject ISender _mediator
@@ -13,38 +14,53 @@
 }
 else
 {
-    <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(99vh - (var(--mud-appbar-height)))">
-        <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
-        <MapsAreaSettings Background="#98c5f5" />
-        <MapsZoomSettings Enable="_canZoom" EnablePanning="_canPan" />
-        <MapsLayers>
-            <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
-                <MapsLayerSelectionSettings Enable="_canSelectLayer" Fill="green">
-                    <MapsLayerSelectionBorder Color="White" Width="2"></MapsLayerSelectionBorder>
-                </MapsLayerSelectionSettings>
-                <MapsShapeSettings ColorValuePath="Color" />
-                <MapsMarkerSettings>
-                    <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Village">
-                        <MapsMarkerSelectionSettings Fill="green" Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
-                        <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
-                    </MapsMarker>
-                </MapsMarkerSettings>
-                <MapsDataLabelSettings Visible="true" LabelPath="State"></MapsDataLabelSettings>
-            </MapsLayer>
-        </MapsLayers>
-    </SfMaps>
+    <MudGrid>
+        <MudItem xs="10">
+            <HoldingCarousel Holdings="_holdings" SelectedIndexChanged="OnSelectedIndexChanged"></HoldingCarousel>
+        </MudItem>
+        <MudItem xs="10">
+            <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(90vh - (var(--mud-appbar-height)))">
+                <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
+                <MapsAreaSettings Background="#98c5f5" />
+                <MapsCenterPosition Longitude="@_holdings[_selectedHolding].Longitude" Latitude="@_holdings[_selectedHolding].Latitude"></MapsCenterPosition>
+                <MapsZoomSettings Enable="_canZoom" ZoomFactor="_zoomFactor" EnablePanning="_canPan" />
+                <MapsLayers>
+                    <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
+                        <MapsLayerSelectionSettings Enable="_canSelectLayer" Fill="green">
+                            <MapsLayerSelectionBorder Color="White" Width="2"></MapsLayerSelectionBorder>
+                        </MapsLayerSelectionSettings>
+                        <MapsShapeSettings ColorValuePath="Color" />
+                        <MapsMarkerSettings>
+                            <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Village">
+                                <MapsMarkerSelectionSettings Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
+                                <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
+                            </MapsMarker>
+                        </MapsMarkerSettings>
+                        <MapsDataLabelSettings Visible="true" LabelPath="State"></MapsDataLabelSettings>
+                    </MapsLayer>
+                </MapsLayers>
+            </SfMaps>
+        </MudItem>
+        <MudItem xs="2">
+            @_holdings[_selectedHolding].Id
+        </MudItem>
+    </MudGrid>
+
 }
 @code {
     private SfMaps? _sfMaps;
     private string? _map;
     private bool _loaded = false;
-    private List<Holding> _holdings = [];
     private bool _canSelectMarker = true;
     private bool _canSelectLayer = false;
+    private int _zoomFactor = 10;
     private bool _canZoom = true;
     private bool _canPan = true;
     private bool _tooltipsVisible = true;
-    private bool _markersVisible = false;
+    private bool _markersVisible = true;
+
+    private List<Holding>? _holdings;
+    private int _selectedHolding;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,24 +70,26 @@ else
         _holdings = await _mediator.Send(new GetAllHoldingsQuery());
         _loaded = true;
     }
-    private void OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
+
+    private Task OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
     {
-        _snackbar.Add($"Marker Clicked");
+        return Task.FromResult(_snackbar.Add($"Marker Clicked"));
     }
 
-    public void OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
+    public Task OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
-        _canSelectMarker = false;
+        return Task.FromResult(_canSelectMarker = false);
 
     }
-    public async void OnPanCompleteEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
+
+    public async Task OnPanCompleteEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
     {
         await Task.Delay(500);
 
         _canSelectMarker = true;
     }
 
-    public void OnZoomCompleteEvent(Syncfusion.Blazor.Maps.MapZoomEventArgs args)
+    public Task OnZoomCompleteEvent(Syncfusion.Blazor.Maps.MapZoomEventArgs args)
     {
         if (args.Scale < 2)
         {
@@ -81,6 +99,13 @@ else
         {
             _markersVisible = true;
         }
+        return Task.CompletedTask;
     }
 
+    public Task OnSelectedIndexChanged(int value)
+    {
+        _zoomFactor = 10;
+        _selectedHolding = value;
+        return Task.CompletedTask;
+    }
 }

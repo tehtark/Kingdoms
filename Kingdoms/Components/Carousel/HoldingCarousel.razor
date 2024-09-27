@@ -1,0 +1,30 @@
+﻿@if (Holdings != null)
+{
+    <MudCarousel SelectedIndexChanged="Update" ItemsSource="@Holdings" Style="height:100%;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
+        <ItemTemplate>
+            <MudPaper Class="d-flex justify-center align-center" Style="height:100%">
+                <MudText>@Holdings[_selectedIndex].Id</MudText>
+            </MudPaper>
+        </ItemTemplate>
+    </MudCarousel>
+}
+else
+{
+    <Loading />
+}
+@code {
+    [Parameter]
+    [EditorRequired]
+    public List<Holding>? Holdings { get; set; }
+
+    [Parameter]
+    public EventCallback<int> SelectedIndexChanged { get; set; }
+
+    private int _selectedIndex;
+
+    private async Task Update(int value)
+    {
+        _selectedIndex = value;
+        await SelectedIndexChanged.InvokeAsync(value);
+    }
+}

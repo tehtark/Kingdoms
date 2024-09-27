@@ -8,6 +8,7 @@
 @using Kingdoms.Application.Features.Building.Queries
 @using Kingdoms.Application.Features.Resources.Queries
 @using Kingdoms.Application.Services
+@using Kingdoms.Components.Carousel
 @using Kingdoms.Components.DataGrid
 @using Kingdoms.Components.Information
 @using Kingdoms.Domain.Entities
@@ -35,17 +36,11 @@
 }
 else
 {
-    <MudGrid>
+    <MudGrid Spacing="1">
         @if (_holdings.Count > 0)
         {
             <MudItem xs="12">
-                <MudCarousel SelectedIndexChanged="OnSelectedIndexChanged" ItemsSource="@_holdings" Style="height:50px;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="false">
-                    <ItemTemplate>
-                        <MudPaper Class="d-flex justify-center align-center" Style="height:50px">
-                            <MudText>@_holdings[_selectedIndex].Id</MudText>
-                        </MudPaper>
-                    </ItemTemplate>
-                </MudCarousel>
+                <HoldingCarousel Holdings="_holdings" SelectedIndexChanged="OnSelectedIndexChanged"></HoldingCarousel>
             </MudItem>
             <MudItem xs="12">
                 <MudPaper>
