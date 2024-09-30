@@ -1,12 +1,73 @@
-﻿<AuthorizeView>
+﻿@using Kingdoms.Application.Features.Player.Queries
+@attribute [Authorize]
+
+@inject ISender _mediator
+
+<AuthorizeView>
     <Authorized>
-        <a style="color:white" href="Account/Logout">
-            <MudIcon Icon="@Presentation.Shared.Icons.Logout" />
-        </a>
+        <MudStack Spacing="2" Row="true">
+            @if (_player != null)
+            {
+                <div style="justify-content:center; align-content:center;">
+                    @_player.Username
+                </div>
+                <MudTooltip Text="Gold">
+                    <MudStack Spacing="2" Row="true">
+                        <div style="justify-content:center; align-content:center;">
+                            <MudIcon Icon="@Presentation.Shared.Icons.Gold" />
+                        </div>
+                        <div style="justify-content:center; align-content:center;">
+                            @_player.Gold
+                        </div>
+                    </MudStack>
+                </MudTooltip>
+
+                <div style="justify-content:center; align-content:center;">
+                    <MudTooltip Text="Logout">
+                        <a style="color:white" href="Account/Logout">
+                            <MudIcon Icon="@Presentation.Shared.Icons.Logout" />
+                        </a>
+                    </MudTooltip>
+                </div>
+            }
+            else
+            {
+                <Loading Size="Size.Small" />
+            }
+        </MudStack>
     </Authorized>
     <NotAuthorized>
-        <a style="color:white" href="Account/Login?redirectUri=/">
-            <MudIcon Icon="@Presentation.Shared.Icons.Login" />
-        </a>
+        <div style="justify-content:center; align-content:center">
+            <MudTooltip Text="Login">
+                <a style="color:white" href="Account/Login?redirectUri=/">
+                    <MudIcon Icon="@Presentation.Shared.Icons.Login" />
+                </a>
+            </MudTooltip>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private Player? _player;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(Globals.DefaultDelay);
+
+        if (AuthenticationState is not null)
+        {
+            var state = await AuthenticationState;
+            var _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+            if (_playerId is not null)
+            {
+                _player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
+                if (_player == null)
+                {
+                    _player = new("Uninitialised", "Unintitalised");
+                }
+            }
+        }
+    }
+}
