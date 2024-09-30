@@ -2,11 +2,12 @@
 @using Kingdoms.Application.Features.Holding.Queries
 @using Kingdoms.Application.Features.Player.Commands
 @using Kingdoms.Application.Features.Player.Queries
+@using Kingdoms.Application.Services
 
 @attribute [Authorize]
-@inject ISender _mediator
 @inject NavigationManager _nav
 @inject IDialogService _dialogService
+@inject PlayerService _playerService
 
 @if (_loaded)
 {
@@ -36,16 +37,12 @@ else
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null)
-        {
-            var state = await AuthenticationState;
-            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
 
-            if (_playerId is not null)
-            {
-                _player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
-            }
-            _loaded = true;
+        if (_playerId is not null)
+        {
+            _player = await _playerService.GetPlayerAsync(_playerId);
         }
+        _loaded = true;
     }
 }

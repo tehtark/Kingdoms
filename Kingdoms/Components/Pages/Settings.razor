@@ -1,25 +1,25 @@
-﻿@page "/settings"
-
-@attribute [Authorize]
-
-@inject ISender _mediator
-
-@using System.Text.RegularExpressions
+﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using Kingdoms.Application.Features.Player.Queries
+@using Kingdoms.Application.Services
+
+@page "/settings"
+
+@attribute [Authorize]
+@inject PlayerService _playerService
 
 @if (Player is null)
 {
-        <Loading></Loading>
+    <Loading></Loading>
 }
 else
 {
 
-        <MudGrid>
-            <MudItem xs="12">
-                <MudField Label="Username" Variant="Variant.Text">@Player.Username</MudField>
-            </MudItem>
-        </MudGrid>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudField Label="Username" Variant="Variant.Text">@Player.Username</MudField>
+        </MudItem>
+    </MudGrid>
 }
 
 @code {
@@ -32,16 +32,12 @@ else
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null)
-        {
-            var state = await AuthenticationState;
-            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null)
-            {
-                Player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
-            }
-        }
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
 
+        if (_playerId is not null)
+        {
+            Player = await _playerService.GetPlayerAsync(_playerId);
+        }
         await base.OnInitializedAsync();
     }
 

@@ -1,7 +1,7 @@
 ﻿@using Kingdoms.Application.Features.Player.Queries
+@using Kingdoms.Application.Services
 @attribute [Authorize]
-
-@inject ISender _mediator
+@inject PlayerService _playerService
 
 <AuthorizeView>
     <Authorized>
@@ -51,22 +51,19 @@
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
     private Player? _player;
+    private string? _playerId;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(Globals.DefaultDelay);
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
 
-        if (AuthenticationState is not null)
+        if (_playerId is not null)
         {
-            var state = await AuthenticationState;
-            var _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null)
+            _player = await _playerService.GetPlayerAsync(_playerId);
+            if (_player == null)
             {
-                _player = await _mediator.Send(new GetPlayerByIdQuery(_playerId));
-                if (_player == null)
-                {
-                    _player = new("Uninitialised", "Unintitalised");
-                }
+                _player = new("Uninitialised", "Unintitalised");
             }
         }
     }

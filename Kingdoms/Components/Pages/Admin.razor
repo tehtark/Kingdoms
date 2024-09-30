@@ -4,13 +4,13 @@
 @using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Application.Services
 
-@attribute [Authorize]
-
 @implements IAsyncDisposable
-@inject ISender _mediator
+@attribute [Authorize]
 @inject NavigationManager _nav
 @inject ISnackbar _snackbar
-@inject GameTickService _gameTickServices
+@inject DatabaseService _databaseService
+@inject GameTickService _gameTickService
+@inject PlayerService _playerService
 @inject HoldingService _holdingService
 @inject MapService _mapService
 
@@ -53,40 +53,36 @@ else
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null)
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
+        if (_playerId is not null)
         {
-            var state = await AuthenticationState;
-            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null)
+            if (_playerId != Environment.GetEnvironmentVariable("ADMIN_ID"))
             {
-                if (_playerId != Environment.GetEnvironmentVariable("ADMIN_ID"))
-                {
-                    _nav.NavigateTo("/", true);
-                }
-                _states = await _mapService.GetStates();
-
+                _nav.NavigateTo("/", true);
             }
+            _states = await _mapService.GetStates();
+
         }
 
-        _tick = await _mediator.Send(new GetTickQuery());
-        _gameTickServices.OnTickUpdated += GameTickServices_OnTickUpdated;
+        _tick = _gameTickService.Tick;
+        _gameTickService.OnTickUpdated += OnTickUpdated;
         _isLoaded = true;
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
     {
-        _gameTickServices.OnTickUpdated -= GameTickServices_OnTickUpdated;
+        _gameTickService.OnTickUpdated -= OnTickUpdated;
         return ValueTask.CompletedTask;
     }
 
-    private async Task GameTickServices_OnTickUpdated()
+    private async Task OnTickUpdated()
     {
-        _tick = await _mediator.Send(new GetTickQuery());
+        _tick = _gameTickService.Tick;
         await InvokeAsync(StateHasChanged);
     }
     private async Task ResetDatabase()
     {
-        await _mediator.Send(new ResetDatabaseCommand());
+        await _databaseService.ResetDatabaseAsync();
         _snackbar.Add("Database reset!");
         _nav.NavigateTo("/", true);
     }

@@ -1,11 +1,10 @@
 ﻿using Kingdoms.Application.Features.Game.Commands;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace Kingdoms.Application.Services;
 
-public class GameTickService(IServiceProvider serviceProvider)
+public class GameTickService(IMediator mediator)
 {
     private int _tick;
 
@@ -20,9 +19,8 @@ public class GameTickService(IServiceProvider serviceProvider)
     }
 
     private readonly int _tickRate = 15;
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public event Func<Task> OnTickUpdated;
+    public event Func<Task>? OnTickUpdated;
 
     public async Task Initialise()
     {
@@ -35,12 +33,8 @@ public class GameTickService(IServiceProvider serviceProvider)
         {
             Log.Debug("GameTickService: Tick!");
             Tick += 1;
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
-                await mediator.Send(new UpdateBuildingsConstructionCommand());
-                await mediator.Send(new UpdateBuildingsProductionCommand());
-            }
+            await mediator.Send(new UpdateBuildingsConstructionCommand());
+            await mediator.Send(new UpdateBuildingsProductionCommand());
 
             if (OnTickUpdated != null)
             {

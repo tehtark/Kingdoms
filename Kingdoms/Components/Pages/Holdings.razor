@@ -24,9 +24,9 @@
 @attribute [StreamRendering]
 
 @inject NavigationManager _nav
-@inject ISender _mediator
 @inject ISnackbar _snackbar
 @inject GameTickService _gameTickService
+@inject PlayerService _playerService
 @inject HoldingService _holdingService
 @inject MapService _mapService
 
@@ -93,14 +93,11 @@ else
     {
         await Task.Delay(Globals.DefaultDelay);
 
-        if (AuthenticationState is not null)
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
+
+        if (_playerId is not null)
         {
-            var state = await AuthenticationState;
-            _playerId = await _mediator.Send(new GetPlayerIdFromAuthenticationStateQuery(state));
-            if (_playerId is not null)
-            {
-                await RefreshData();
-            }
+            await RefreshData();
         }
         _gameTickService.OnTickUpdated += OnTickUpdated;
 

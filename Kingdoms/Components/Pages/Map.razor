@@ -1,11 +1,15 @@
 ﻿@page "/map"
 @using Kingdoms.Application.Features.Holding.Queries
 @using Kingdoms.Application.Features.Map
+@using Kingdoms.Application.Features.Player.Queries
 @using Kingdoms.Application.Services
 @using Kingdoms.Components.Carousel
 @using Newtonsoft.Json
 
-@inject ISender _mediator
+@attribute [Authorize]
+
+@inject HoldingService _holdingService
+@inject PlayerService _playerService
 @inject ISnackbar _snackbar
 
 @if (!_loaded)
@@ -48,6 +52,9 @@ else
 
 }
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
     private SfMaps? _sfMaps;
     private string? _map;
     private bool _loaded = false;
@@ -60,14 +67,24 @@ else
     private bool _markersVisible = true;
 
     private List<Holding>? _holdings;
+    private List<Holding>? _playerHoldings;
     private int _selectedHolding;
+
+    private string? _playerId;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(Globals.DefaultDelay);
 
+        if (AuthenticationState is not null) _playerId = await _playerService.GetPlayerIdAsync(await AuthenticationState);
+
+        if (_playerId is not null)
+        {
+            _playerHoldings = await _holdingService.GetPlayerHoldings(_playerId);
+        }
+
         _map = Globals.Map;
-        _holdings = await _mediator.Send(new GetAllHoldingsQuery());
+        _holdings = await _holdingService.GetAllHoldingsAsync();
         _loaded = true;
     }
 
