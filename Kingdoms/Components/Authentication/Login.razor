@@ -1,8 +1,12 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <a style="color:white" href="Account/Logout">Logout</a>
+        <a style="color:white" href="Account/Logout">
+            <MudIcon Icon="@Presentation.Shared.Icons.Logout" />
+        </a>
     </Authorized>
     <NotAuthorized>
-        <a style="color:white" href="Account/Login?redirectUri=/">Login</a>
+        <a style="color:white" href="Account/Login?redirectUri=/">
+            <MudIcon Icon="@Presentation.Shared.Icons.Login" />
+        </a>
     </NotAuthorized>
 </AuthorizeView>
