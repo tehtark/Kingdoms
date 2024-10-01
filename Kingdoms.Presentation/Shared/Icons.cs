@@ -5,6 +5,7 @@ public static class Icons
     #region Holdings
 
     public const string Village = "https://tark.uk/wp-content/uploads/2024/09/2.png";
+    public const string Player_Village = "https://tark.uk/wp-content/uploads/2024/09/2-click.png";
     public const string Castle = "https://tark.uk/wp-content/uploads/2024/09/castle.png";
 
     #endregion Holdings

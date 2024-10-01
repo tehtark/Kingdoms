@@ -22,4 +22,9 @@ public class PlayerService(IMediator mediator)
     {
         return await mediator.Send(new GetPlayerQuery(playerId));
     }
+
+    public async Task<string?> GetPlayerUsernameAsync(string playerId)
+    {
+        return await mediator.Send(new GetPlayerUsernameQuery(playerId));
+    }
 }

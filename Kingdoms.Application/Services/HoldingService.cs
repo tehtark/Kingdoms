@@ -31,6 +31,11 @@ public class HoldingService(IMediator mediator)
         await mediator.Send(new ConstructHoldingCommand(playerId, holdingType, coordinate.X, coordinate.Y));
     }
 
+    public async Task<Holding?> GetHoldingAsync(Guid holdingId)
+    {
+        return await mediator.Send(new GetHoldingQuery(holdingId));
+    }
+
     public async Task<List<Holding>> GetAllHoldingsAsync()
     {
         return await mediator.Send(new GetAllHoldingsQuery());
@@ -39,5 +44,10 @@ public class HoldingService(IMediator mediator)
     public async Task<List<Holding>> GetPlayerHoldings(string playerId)
     {
         return await mediator.Send(new GetPlayerHoldingsQuery(playerId));
+    }
+
+    public async Task<List<Holding>> GetEnemyHoldingsAsync(string playerId)
+    {
+        return await mediator.Send(new GetEnemyHoldingsQuery(playerId));
     }
 }

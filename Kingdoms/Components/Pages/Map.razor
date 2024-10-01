@@ -12,7 +12,7 @@
 @inject PlayerService _playerService
 @inject ISnackbar _snackbar
 
-@if (!_loaded)
+@if (!_loaded && _selectedHolding == null)
 {
     <Loading />
 }
@@ -20,40 +20,60 @@ else
 {
     <MudGrid>
         <MudItem xs="10">
-            <HoldingCarousel Holdings="_holdings" SelectedIndexChanged="OnSelectedIndexChanged"></HoldingCarousel>
-        </MudItem>
-        <MudItem xs="10">
-            <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(90vh - (var(--mud-appbar-height)))">
-                <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
-                <MapsAreaSettings Background="#98c5f5" />
-                <MapsCenterPosition Longitude="@_holdings[_selectedHolding].Longitude" Latitude="@_holdings[_selectedHolding].Latitude"></MapsCenterPosition>
-                <MapsZoomSettings Enable="_canZoom" ZoomFactor="_zoomFactor" EnablePanning="_canPan" />
-                <MapsLayers>
-                    <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
-                        <MapsLayerSelectionSettings Enable="_canSelectLayer" Fill="green">
-                            <MapsLayerSelectionBorder Color="White" Width="2"></MapsLayerSelectionBorder>
-                        </MapsLayerSelectionSettings>
-                        <MapsShapeSettings ColorValuePath="Color" />
-                        <MapsMarkerSettings>
-                            <MapsMarker Visible="_markersVisible" DataSource="@_holdings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Village">
-                                <MapsMarkerSelectionSettings Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
-                                <MapsMarkerTooltipSettings Visible="_tooltipsVisible" ValuePath="Id"></MapsMarkerTooltipSettings>
-                            </MapsMarker>
-                        </MapsMarkerSettings>
-                        <MapsDataLabelSettings Visible="true" LabelPath="State"></MapsDataLabelSettings>
-                    </MapsLayer>
-                </MapsLayers>
-            </SfMaps>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudButton FullWidth="true" OnClick="OnClick">
+                        <HoldingCarousel Holdings="_playerHoldings" SelectedHoldingChanged="OnSelectedHoldingChanged"></HoldingCarousel>
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12">
+                    <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(90vh - (var(--mud-appbar-height)))">
+                        <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
+                        <MapsAreaSettings Background="#98c5f5" />
+                        <MapsCenterPosition Longitude="@_selectedHolding.Longitude" Latitude="@_selectedHolding.Latitude"></MapsCenterPosition>
+                        <MapsZoomSettings Enable="_canZoom" ZoomFactor="_zoomFactor" EnablePanning="_canPan" />
+                        <MapsLayers>
+                            <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
+                                <MapsLayerSelectionSettings Enable="_canSelectLayer" Fill="green">
+                                    <MapsLayerSelectionBorder Color="White" Width="2"></MapsLayerSelectionBorder>
+                                </MapsLayerSelectionSettings>
+                                <MapsShapeSettings ColorValuePath="Color" />
+                                <MapsMarkerSettings>
+                                    <MapsMarker Visible="_markersVisible" DataSource="@_playerHoldings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Player_Village">
+                                        <MapsMarkerSelectionSettings Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
+                                    </MapsMarker>
+                                    <MapsMarker Visible="_markersVisible" DataSource="@_enemyHoldings" TValue="Holding" Height="40" Width="40" AnimationDuration=0 Shape="Syncfusion.Blazor.Maps.MarkerType.Image" ImageUrl="@Presentation.Shared.Icons.Village">
+                                        <MapsMarkerSelectionSettings Enable="_canSelectMarker"></MapsMarkerSelectionSettings>
+                                    </MapsMarker>
+                                </MapsMarkerSettings>
+                                <MapsDataLabelSettings Visible="true" LabelPath="State"></MapsDataLabelSettings>
+                            </MapsLayer>
+                        </MapsLayers>
+                    </SfMaps>
+                </MudItem>
+            </MudGrid>
         </MudItem>
         <MudItem xs="2">
-            @_holdings[_selectedHolding].Id
+            <MudPaper Height="100%" Width="100%">
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <h2>
+                        Holding Information
+                    </h2>
+                    Player:
+                    <MudButton>Attack</MudButton>
+                    <MudButton>Scout</MudButton>
+                    <MudButton>Trade</MudButton>
+                </MudStack>
+            </MudPaper>
         </MudItem>
     </MudGrid>
-
 }
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
+    private string? _playerId;
+
+    #region Map Options
 
     private SfMaps? _sfMaps;
     private string? _map;
@@ -63,14 +83,13 @@ else
     private int _zoomFactor = 10;
     private bool _canZoom = true;
     private bool _canPan = true;
-    private bool _tooltipsVisible = true;
     private bool _markersVisible = true;
 
-    private List<Holding>? _holdings;
-    private List<Holding>? _playerHoldings;
-    private int _selectedHolding;
+    #endregion
 
-    private string? _playerId;
+    private List<Holding>? _enemyHoldings;
+    private List<Holding>? _playerHoldings;
+    private Holding? _selectedHolding;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,16 +100,19 @@ else
         if (_playerId is not null)
         {
             _playerHoldings = await _holdingService.GetPlayerHoldings(_playerId);
+            _enemyHoldings = await _holdingService.GetEnemyHoldingsAsync(_playerId);
+            _selectedHolding = _playerHoldings.FirstOrDefault();
         }
 
         _map = Globals.Map;
-        _holdings = await _holdingService.GetAllHoldingsAsync();
         _loaded = true;
     }
 
-    private Task OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
+    private async Task OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
     {
-        return Task.FromResult(_snackbar.Add($"Marker Clicked"));
+        args.Data.TryGetValue("Id", out string? holdingId);
+        if (string.IsNullOrEmpty(holdingId)) return;
+        _selectedHolding = await _holdingService.GetHoldingAsync(new Guid(holdingId));
     }
 
     public Task OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
@@ -119,10 +141,21 @@ else
         return Task.CompletedTask;
     }
 
-    public Task OnSelectedIndexChanged(int value)
+    public Task OnSelectedHoldingChanged(Holding holding)
     {
-        _zoomFactor = 10;
-        _selectedHolding = value;
+        _selectedHolding = holding;
         return Task.CompletedTask;
     }
+
+    private void OnClick()
+    {
+
+    }
+
+    // public Task OnSelectedIndexChanged(int value)
+    // {
+    //     _zoomFactor = 10;
+    //     _selectedHoldingIndex = value;
+    //     return Task.CompletedTask;
+    // }
 }
