@@ -6,13 +6,16 @@
 @using Kingdoms.Components.Carousel
 @using Newtonsoft.Json
 
+@implements IAsyncDisposable
+
 @attribute [Authorize]
 
+@inject GameTickService _gameTickService
 @inject HoldingService _holdingService
 @inject PlayerService _playerService
 @inject ISnackbar _snackbar
 
-@if (!_loaded && _selectedHolding == null)
+@if (!_loaded && _targetedHolding == null)
 {
     <Loading />
 }
@@ -22,15 +25,15 @@ else
         <MudItem xs="10">
             <MudGrid>
                 <MudItem xs="12">
-                    <MudButton FullWidth="true" OnClick="OnClick">
-                        <HoldingCarousel Holdings="_playerHoldings" SelectedHoldingChanged="OnSelectedHoldingChanged"></HoldingCarousel>
+                    <MudButton FullWidth="true">
+                        <HoldingCarousel Holdings="_playerHoldings" SelectedHoldingChanged="OnCarouselHoldingChanged"></HoldingCarousel>
                     </MudButton>
                 </MudItem>
                 <MudItem xs="12">
                     <SfMaps @ref=_sfMaps Background="#98c5f5" Width="100%" Height="calc(90vh - (var(--mud-appbar-height)))">
                         <MapsEvents OnMarkerClick="OnMarkerClickEvent" OnPan="OnPanEvent" OnPanComplete="OnPanCompleteEvent" OnZoomComplete="@OnZoomCompleteEvent" />
                         <MapsAreaSettings Background="#98c5f5" />
-                        <MapsCenterPosition Longitude="@_selectedHolding.Longitude" Latitude="@_selectedHolding.Latitude"></MapsCenterPosition>
+                        <MapsCenterPosition Longitude="@_targetedHolding.Longitude" Latitude="@_targetedHolding.Latitude"></MapsCenterPosition>
                         <MapsZoomSettings Enable="_canZoom" ZoomFactor="_zoomFactor" EnablePanning="_canPan" />
                         <MapsLayers>
                             <MapsLayer ShapeData='new {dataOptions= _map }' TValue="string">
@@ -54,17 +57,12 @@ else
             </MudGrid>
         </MudItem>
         <MudItem xs="2">
-            <MudPaper Height="100%" Width="100%">
-                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <h2>
-                        Holding Information
-                    </h2>
-                    Player:
-                    <MudButton>Attack</MudButton>
-                    <MudButton>Scout</MudButton>
-                    <MudButton>Trade</MudButton>
-                </MudStack>
-            </MudPaper>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <HoldingInformation Holding="_targetedHolding" />
+                <MudButton FullWidth="true" Variant="Variant.Filled">Attack</MudButton>
+                <MudButton FullWidth="true" Variant="Variant.Filled">Scout</MudButton>
+                <MudButton FullWidth="true" Variant="Variant.Filled">Trade</MudButton>
+            </MudStack>
         </MudItem>
     </MudGrid>
 }
@@ -89,7 +87,8 @@ else
 
     private List<Holding>? _enemyHoldings;
     private List<Holding>? _playerHoldings;
-    private Holding? _selectedHolding;
+    private Holding? _targetedHolding;
+    private Holding? _currentHolding;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,18 +100,32 @@ else
         {
             _playerHoldings = await _holdingService.GetPlayerHoldings(_playerId);
             _enemyHoldings = await _holdingService.GetEnemyHoldingsAsync(_playerId);
-            _selectedHolding = _playerHoldings.FirstOrDefault();
+            _targetedHolding = _playerHoldings.FirstOrDefault();
         }
 
         _map = Globals.Map;
+
+        _gameTickService.OnTickUpdated += OnTickUpdated;
+
         _loaded = true;
+    }
+
+    ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        _gameTickService.OnTickUpdated -= OnTickUpdated;
+        return ValueTask.CompletedTask;
+    }
+
+    public async Task OnTickUpdated()
+    {
+        _snackbar.Add("Tick Updated", Severity.Info);
     }
 
     private async Task OnMarkerClickEvent(Syncfusion.Blazor.Maps.MarkerClickEventArgs args)
     {
         args.Data.TryGetValue("Id", out string? holdingId);
         if (string.IsNullOrEmpty(holdingId)) return;
-        _selectedHolding = await _holdingService.GetHoldingAsync(new Guid(holdingId));
+        _targetedHolding = await _holdingService.GetHoldingAsync(new Guid(holdingId));
     }
 
     public Task OnPanEvent(Syncfusion.Blazor.Maps.MapPanEventArgs args)
@@ -141,21 +154,10 @@ else
         return Task.CompletedTask;
     }
 
-    public Task OnSelectedHoldingChanged(Holding holding)
+    public Task OnCarouselHoldingChanged(Holding holding)
     {
-        _selectedHolding = holding;
+        _targetedHolding = holding;
+        _currentHolding = holding;
         return Task.CompletedTask;
     }
-
-    private void OnClick()
-    {
-
-    }
-
-    // public Task OnSelectedIndexChanged(int value)
-    // {
-    //     _zoomFactor = 10;
-    //     _selectedHoldingIndex = value;
-    //     return Task.CompletedTask;
-    // }
 }

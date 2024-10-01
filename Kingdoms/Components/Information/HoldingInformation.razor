@@ -1,12 +1,31 @@
-﻿Id: @Holding.Id
+﻿@using Kingdoms.Application.Services
+
+@inject PlayerService _playerService
+<MudPaper>
+    <MudStack>
+
+Id: @Holding.Id
 <br />
-Owner: @Holding.PlayerId
+Holder: @_username
 <br />
 Type: @Holding.Type
 <br />
+    </MudStack>
+</MudPaper>
 
 @code {
     [Parameter]
     [EditorRequired]
     public Holding? Holding { get; set; }
+
+    private string? _username;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Holding is not null)
+        {
+            _username = await _playerService.GetPlayerUsernameAsync(Holding.PlayerId);
+        }
+        await base.OnParametersSetAsync();
+    }
 }
